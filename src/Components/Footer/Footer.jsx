@@ -10,7 +10,7 @@ import Profast from "../Profast/Profast";
 const Footer = () => {
   return (
     <footer className="bg-neutral-100  ">
-      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col  items-center gap-10">
+      <div className="max-w-7xl mx-auto px-4 py-8 flex flex-col  items-center gap-6">
         {/* Brand & Copyright */}
         <div className="text-center md:text-left">
           <Profast />
