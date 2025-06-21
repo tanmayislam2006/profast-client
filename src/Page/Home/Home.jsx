@@ -1,4 +1,5 @@
 import HowWorks from "./HowWorks";
+import OurClient from "./OurClient";
 import Slider from "./Slider";
 
 const Home = () => {
@@ -6,6 +7,7 @@ const Home = () => {
     <div>
       <Slider />
       <HowWorks/>
+      <OurClient/>
     </div>
   );
 };
