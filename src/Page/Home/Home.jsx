@@ -1,4 +1,5 @@
 import ExploreFeatures from "./ExploreFeatures";
+import FAQ from "./FAQ";
 import HowWorks from "./HowWorks";
 import Marchent from "./Marchent";
 import OurClient from "./OurClient";
@@ -14,6 +15,7 @@ const Home = () => {
       <ExploreFeatures/>
       <Marchent/>
       <OurClient/>
+      <FAQ/>
     </div>
   );
 };
