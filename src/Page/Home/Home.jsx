@@ -1,5 +1,6 @@
 import ExploreFeatures from "./ExploreFeatures";
 import HowWorks from "./HowWorks";
+import Marchent from "./Marchent";
 import OurClient from "./OurClient";
 import Slider from "./Slider";
 
@@ -9,6 +10,7 @@ const Home = () => {
       <Slider />
       <HowWorks/>
       <ExploreFeatures/>
+      <Marchent/>
       <OurClient/>
     </div>
   );
