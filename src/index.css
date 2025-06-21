@@ -1,0 +1,27 @@
+@import url('https://fonts.googleapis.com/css2?family=Urbanist:ital,wght@0,100..900;1,100..900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,100..900;1,100..900&display=swap');
+@import "tailwindcss";
+
+@plugin "daisyui" {
+  themes: light --default;
+}
+
+@plugin "daisyui/theme" {
+  name: "light";
+  default: true;
+  --color-primary: #ACC857
+;
+  --color-secondary: #81C784 ;
+  --color-accent: #2E7D32 ;
+  --color-neutral: #F5F5F5 ;
+}
+* {
+   font-family:  "Urbanist", sans-serif;
+}
+h1, h2, h3, h4, h5, h6 { 
+  font-family: "Montserrat", sans-serif;
+  font-weight: 700;
+}
+html{
+  scroll-behavior: smooth;
+}
