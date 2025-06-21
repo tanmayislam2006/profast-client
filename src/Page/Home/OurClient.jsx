@@ -9,6 +9,9 @@ import Brand7 from "../../assets/brands/randstad.png";
 const OurClient = () => {
   return (
     <div className="my-20">
+      <h3 className="text-center font-bold mb-20 text-2xl">
+        We've helped thousands of sales teams
+      </h3>
       <Marquee className="" pauseOnHover={true} speed={80}>
         <img src={Brand2} className="ml-10" alt="" />
         <img src={Brand3} className="ml-10" alt="" />
