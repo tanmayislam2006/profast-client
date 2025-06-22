@@ -1,3 +1,4 @@
+import CustomerReview from "./CustomerReview";
 import ExploreFeatures from "./ExploreFeatures";
 import FAQ from "./FAQ";
 import HowWorks from "./HowWorks";
@@ -15,6 +16,7 @@ const Home = () => {
       <ExploreFeatures/>
       <Marchent/>
       <OurClient/>
+      <CustomerReview/>
       <FAQ/>
     </div>
   );
