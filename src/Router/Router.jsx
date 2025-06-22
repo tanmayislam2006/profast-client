@@ -3,6 +3,7 @@ import MainLayout from "../Layout/MainLayout";
 import Error from "../Page/Error/Error";
 import Home from "../Page/Home/Home";
 import Coverage from "../Page/Coverage/Coverage";
+import About from "../Page/About/About";
 
 const router = createBrowserRouter([
   {
@@ -18,6 +19,10 @@ const router = createBrowserRouter([
         path: "/coverage",
         Component: Coverage,
         loader: () => fetch("./coverageArea.json"),
+      },
+      {
+        path:'/about',
+        Component:About
       },
     ],
   },
