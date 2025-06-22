@@ -83,7 +83,7 @@ const Navbar = () => {
     </>
   );
   return (
-    <nav className="w-full bg-base-100 sticky top-0 z-20 shadow-md rounded-lg py-3">
+    <nav className="w-full bg-base-100 sticky top-0 z-50 shadow-md rounded-lg py-3">
       <div className="max-w-7xl mx-auto flex items-center justify-between px-4 py-2 ">
         <Profast />
         <ul className="hidden lg:flex gap-8 items-center">{link}</ul>

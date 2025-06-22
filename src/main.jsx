@@ -4,11 +4,13 @@ import "./index.css";
 import ProfastProvidor from "./Context/ProfastProvidor.jsx";
 import { RouterProvider } from "react-router";
 import router from "./Router/Router.jsx";
+import { ToastContainer } from "react-toastify";
 
 createRoot(document.getElementById("root")).render(
   <StrictMode>
     <ProfastProvidor>
       <RouterProvider router={router} />
+      <ToastContainer />
     </ProfastProvidor>
   </StrictMode>
 );
