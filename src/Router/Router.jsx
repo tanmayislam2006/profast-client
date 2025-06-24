@@ -6,6 +6,9 @@ import Coverage from "../Page/Coverage/Coverage";
 import About from "../Page/About/About";
 import AuthnticationLayout from "../Layout/AuthnticationLayout";
 import Login from "../Page/Login/Login";
+import Register from "../Page/Register/Register";
+import PrivateRouter from "./PrivateRouter";
+import Pricing from "../Page/Pricing/Pricing";
 
 const router = createBrowserRouter([
   {
@@ -23,20 +26,32 @@ const router = createBrowserRouter([
         loader: () => fetch("./coverageArea.json"),
       },
       {
-        path:'/about',
-        Component:About
+        path: "/about",
+        Component: About,
+      },
+      {
+        path: "/pricing",
+        element: (
+          <PrivateRouter>
+            <Pricing />
+          </PrivateRouter>
+        ),
       },
     ],
   },
   {
-    path:'/',
-    Component:AuthnticationLayout,
-    children:[
+    path: "/",
+    Component: AuthnticationLayout,
+    children: [
       {
-        path:'login',
-        Component:Login
-      }
-    ]
-  }
+        path: "login",
+        Component: Login,
+      },
+      {
+        path: "register",
+        Component: Register,
+      },
+    ],
+  },
 ]);
 export default router;

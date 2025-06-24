@@ -1,58 +1,79 @@
-import React from "react";
-import { useForm } from "react-hook-form";
+import React, { useState } from "react";
+import { FaRegEye, FaRegEyeSlash } from "react-icons/fa";
+import { FcGoogle } from "react-icons/fc";
+import { Link, useNavigate } from "react-router";
+import useProfastAuth from "../../Hook/useProfastAuth";
+import { toast } from "react-toastify";
 
 const Login = () => {
-  const {
-    register,
-    handleSubmit,
-    formState: { errors },
-  } = useForm();
-  const onSubmit = (data) => {
-    console.log(data);
+  const [showPass, setShowPass] = useState(false);
+  const { googleLogin } = useProfastAuth();
+  const navigate = useNavigate();
+  const handleGoogleLogin = () => {
+    googleLogin().then((result) => {
+      if (result.user) {
+        navigate(location?.state || "/");
+      }
+
+      toast.success("Login successful!");
+    });
   };
-  
+
   return (
-    <div className="bg-white">
-      <div>
-        <h1 className="text-5xl ">Welcome Back</h1>
-        <p>Login with Profast </p>
-      </div>
-      <form onSubmit={handleSubmit(onSubmit)}>
-        <fieldset className="fieldset">
-          <label className="label font-bold">Email</label>
+    <div className="max-w-md w-full border-2 border-primary/20 rounded-2xl shadow-lg p-8 flex flex-col items-center">
+      <h2 className="text-2xl font-bold text-primary mb-6">Login to Profast</h2>
+      <form className="w-full flex flex-col gap-4">
+        <input
+          name="email"
+          type="email"
+          placeholder="Email"
+          className="w-full px-4 py-3 rounded-lg border border-primary/20 focus:outline-none focus:border-primary"
+          required
+        />
+        <div className="mb-4 relative ">
+          <p
+            onClick={() => setShowPass(!showPass)}
+            className="absolute right-8 bottom-4 cursor-pointer"
+          >
+            {showPass ? <FaRegEyeSlash size={20} /> : <FaRegEye size={20} />}
+          </p>
           <input
-            type="email"
-            className="input"
-            {...register("email", {
-              required: true,
-            })}
-            placeholder="Email"
+            type={showPass ? "text" : "password"}
+            id="password"
+            name="password"
+            placeholder="Enter your password"
+            className="w-full px-4 py-3 rounded-lg border border-primary/20 focus:outline-none focus:border-primary"
+            required
           />
-          {errors.email?.type === "required" && (
-            <p className="text-red-500">please inter your email</p>
-          )}
-          <label className="label font-bold">Password</label>
-          <input
-            type="password"
-            className="input"
-            {...register("password", {
-              required: true,
-              minLength: 6,
-            })}
-            placeholder="Password"
-          />
-          {errors.password?.type === "required" && (
-            <p className="text-red-500">please inter your password</p>
-          )}
-          {errors.password?.type === "minLength" && (
-            <p className="text-red-500">The password must be 6 characters</p>
-          )}
-          <div>
-            <a className="link link-hover">Forgot password?</a>
-          </div>
-          <button className="btn bg-[#CAEB66] w-80 mt-4">Login</button>
-        </fieldset>
+        </div>
+        <button
+          type="submit"
+          className="w-full bg-primary cursor-pointer text-white font-bold py-3 rounded-lg mt-2"
+        >
+          Login
+        </button>
       </form>
+      <div className="my-4 w-full flex items-center">
+        <div className="flex-1 h-px bg-primary/20"></div>
+        <span className="mx-3 text-gray-400 text-sm">or</span>
+        <div className="flex-1 h-px bg-primary/20"></div>
+      </div>
+      <button
+      onClick={handleGoogleLogin}
+      className="w-full cursor-pointer flex items-center justify-center gap-3 border border-primary/30 py-3 rounded-lg font-semibold text-primary ">
+        <FcGoogle className="text-2xl" />
+        Continue with Google
+      </button>
+      <p className="mt-6 text-sm">
+        Don't have an account?{" "}
+        <Link
+          state={location.state}
+          to="/register"
+          className="text-primary font-semibold"
+        >
+          Register
+        </Link>
+      </p>
     </div>
   );
 };

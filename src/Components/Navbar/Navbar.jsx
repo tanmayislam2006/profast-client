@@ -2,9 +2,10 @@ import React from "react";
 import { Link, NavLink } from "react-router";
 import Profast from "../Profast/Profast";
 import { FaSignInAlt } from "react-icons/fa";
+import useProfastAuth from "../../Hook/useProfastAuth";
 
 const Navbar = () => {
-  const user = null;
+  const { firebaseUser, logoutUser } = useProfastAuth();
 
   const link = (
     <>
@@ -88,7 +89,7 @@ const Navbar = () => {
         <Profast />
         <ul className="hidden lg:flex gap-8 items-center">{link}</ul>
         <div className="flex gap-4 md:gap-10 items-center">
-          {user ? (
+          {firebaseUser ? (
             <div className="dropdown dropdown-end mr-5  cursor-pointer">
               <div
                 tabIndex={0}
@@ -96,10 +97,10 @@ const Navbar = () => {
                 className="btn btn-ghost btn-circle avatar relative group "
               >
                 <div className="w-10 rounded-full">
-                  <img alt="user" src={user?.photo} />
+                  <img alt="user" src={firebaseUser?.photoURL} />
                 </div>
                 <p className="absolute left-1/2 -translate-x-1/2 -bottom-10 bg-gray-800 text-white  rounded px-3 py-1 opacity-0 group-hover:opacity-100 transition pointer-events-none whitespace-nowrap z-50">
-                  {user?.name}
+                  {firebaseUser?.displayName}
                 </p>
               </div>
               <ul
@@ -107,6 +108,16 @@ const Navbar = () => {
                 className="menu menu-sm bg-base-100 dropdown-content rounded-box z-1 mt-3 w-64 p-2 shadow space-y-5 py-2"
               >
                 {link}
+                {firebaseUser && (
+                  <li>
+                    <button
+                    onClick={()=>logoutUser()}
+                      className="flex items-center gap-2 bg-primary text-white px-4 py-2 rounded-full font-bold"
+                    >
+                      <FaSignInAlt /> Logout
+                    </button>
+                  </li>
+                )}
               </ul>
             </div>
           ) : (
