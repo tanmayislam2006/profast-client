@@ -101,6 +101,7 @@ const Coverage = () => {
         <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" />
 
         {/* Fly animation when searching */}
+        [sds,svkdsv]
         {flyTo && <FlyToLocation position={flyTo} />}
 
         {/* Show all district markers */}
