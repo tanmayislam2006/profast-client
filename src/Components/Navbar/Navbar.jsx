@@ -81,6 +81,9 @@ const Navbar = () => {
           <span className="">Be a Rider</span>
         </NavLink>
       </li>
+      { firebaseUser && <>
+        <li><NavLink to="/dashboard">Dashboard</NavLink></li>
+      </>}
     </>
   );
   return (
