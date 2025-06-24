@@ -1,23 +1,23 @@
-import React from "react";
+import React, { useState } from "react";
 import { useForm } from "react-hook-form";
 import { useLoaderData } from "react-router";
-import Swal from "sweetalert2";
 import useProfastAuth from "../../Hook/useProfastAuth";
+import Swal from "sweetalert2";
+import useAxiosSecure from "../../Hook/useAxiosSecure";
+
 const generateTrackingID = () => {
-    const date = new Date();
-    const datePart = date.toISOString().split("T")[0].replace(/-/g, "");
-    const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
-    return `PCL-${datePart}-${rand}`;
+  const date = new Date();
+  const datePart = date.toISOString().split("T")[0].replace(/-/g, "");
+  const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
+  return `PCL-${datePart}-${rand}`;
 };
 
 const Pricing = () => {
-  const { user: firebaseUser } = useProfastAuth();
+  const { firebaseUser } = useProfastAuth();
+  const [percelSendData, setParcelSendData] = useState(null);
   const serviceArea = useLoaderData();
-  // just get the region name from servicearea data
-  // to use in the select option
+  const axiosSecure=useAxiosSecure()
   const uniqueRegions = [...new Set(serviceArea.map((w) => w.region))];
-  // get the districts by region
-  // to use in the select option
   const getDistrictsByRegion = (region) =>
     serviceArea.filter((w) => w.region === region).map((w) => w.district);
 
@@ -27,10 +27,14 @@ const Pricing = () => {
     watch,
     formState: { errors },
   } = useForm();
+
+  // Modal state to show delivery cost breakdown
+  // Using useState to manage modal visibility and data
+  const [modal, setModal] = useState({ open: false, data: null });
+
   const onSubmit = (data) => {
     const weight = parseFloat(data.weight) || 0;
     const isSameDistrict = data.sender_center === data.receiver_center;
-
     let baseCost = 0;
     let extraCost = 0;
     let breakdown = "";
@@ -48,75 +52,126 @@ const Pricing = () => {
         } the district.`;
       } else {
         const extraKg = weight - 3;
-        const perKgCharge = (extraKg * 40).toFixed(1);
+        const perKgCharge = extraKg * 40;
         const districtExtra = isSameDistrict ? 0 : 40;
         baseCost = isSameDistrict ? 110 : 150;
         extraCost = perKgCharge + districtExtra;
-
-        breakdown = `
-        Non-document over 3kg ${
+        breakdown = `Non-document over 3kg ${
           isSameDistrict ? "within" : "outside"
-        } the district.<br/>
-        Extra charge: ৳40 x ${extraKg.toFixed(1)}kg = ৳${perKgCharge}<br/>
-        ${districtExtra ? "+ ৳40 extra for outside district delivery" : ""}
-      `;
+        } the district.\nExtra charge: ৳40 x ${extraKg.toFixed(
+          1
+        )}kg = ৳${perKgCharge.toFixed(1)}${
+          districtExtra ? "\n+ ৳40 extra for outside district delivery" : ""
+        }`;
       }
     }
-
     const totalCost = baseCost + extraCost;
-
-    Swal.fire({
-      title: "Delivery Cost Breakdown",
-      icon: "info",
-      html: `
-      <div class="text-left text-base space-y-2">
-        <p><strong>Parcel Type:</strong> ${data.type}</p>
-        <p><strong>Weight:</strong> ${weight} kg</p>
-        <p><strong>Delivery Zone:</strong> ${
-          isSameDistrict ? "Within Same District" : "Outside District"
-        }</p>
-        <hr class="my-2"/>
-        <p><strong>Base Cost:</strong> ৳${baseCost}</p>
-        ${
-          extraCost > 0
-            ? `<p><strong>Extra Charges:</strong> ৳${extraCost}</p>`
-            : ""
-        }
-        <div class="text-gray-500 text-sm">${breakdown}</div>
-        <hr class="my-2"/>
-        <p class="text-xl font-bold text-green-600">Total Cost: ৳${totalCost}</p>
-      </div>
-    `,
-      showDenyButton: true,
-      confirmButtonText: "Proceed to Payment",
-      denyButtonText: "Continue Editing",
-      confirmButtonColor: "#16a34a",
-      denyButtonColor: "#d3d3d3",
-      customClass: {
-        popup: "rounded-xl shadow-md px-6 py-6 ",
+    setParcelSendData({
+      ...data,
+      cost: totalCost,
+      created_by: firebaseUser.email,
+      payment_status: "unpaid",
+      delivery_status: "not_collected",
+      creation_date: new Date().toLocaleDateString("en-GB"),
+      tracking_id: generateTrackingID(),
+    });
+    axiosSecure.post('/addParcel',{...percelSendData}).then(res=>{
+      console.log(res.data);
+    })
+    setModal({
+      open: true,
+      data: {
+        ...data,
+        weight,
+        isSameDistrict,
+        baseCost,
+        extraCost,
+        breakdown,
+        totalCost,
       },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const parcelData = {
-          ...data,
-          cost: totalCost,
-          created_by: firebaseUser.email,
-          payment_status: "unpaid",
-          delivery_status: "not_collected",
-          creation_date: new Date().toISOString(),
-          tracking_id: generateTrackingID(),
-        };
-
-        console.log("Ready for payment:", parcelData);
-      }
     });
   };
+
+  const handleModalClose = () => setModal({ open: false, data: null });
+  const handleProceed = () => {
+    // close the modal
+    setModal({ open: false, data: null });
+    // You can add your payment logic here
+    Swal.fire({
+      title: "Payment Proceed",
+      text: "",
+      icon: "success",
+      confirmButtonText: "OK",
+    });
+  };
+
   const parcelType = watch("type");
   const senderRegion = watch("sender_region");
   const receiverRegion = watch("receiver_region");
 
   return (
-    <div className="min-h-screen py-10 flex items-center justify-center">
+    <div className="min-h-screen py-10 flex items-center justify-center relative">
+      {/* Custom Modal */}
+      {modal.open && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center bg-opacity-40 overflow-y-auto">
+          <div className="bg-white rounded-2xl shadow-2xl max-w-3xl w-full p-8 relative animate-fadeIn">
+            <h3 className="text-2xl font-bold text-primary mb-4 text-center">
+              Delivery Cost Breakdown
+            </h3>
+            <div className="space-y-2 text-base">
+              <div className="flex justify-between">
+                <span className="font-medium">Parcel Type:</span>
+                <span>{modal.data.type}</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Weight:</span>
+                <span>{modal.data.weight} kg</span>
+              </div>
+              <div className="flex justify-between">
+                <span className="font-medium">Delivery Zone:</span>
+                <span>
+                  {modal.data.isSameDistrict
+                    ? "Within Same District"
+                    : "Outside District"}
+                </span>
+              </div>
+              <hr className="my-2" />
+              <div className="flex justify-between">
+                <span className="font-medium">Base Cost:</span>
+                <span>৳{modal.data.baseCost}</span>
+              </div>
+              {modal.data.extraCost > 0 && (
+                <div className="flex justify-between">
+                  <span className="font-medium">Extra Charges:</span>
+                  <span>৳{modal.data.extraCost}</span>
+                </div>
+              )}
+              <div className="bg-gray-50 rounded-lg p-3 text-gray-600 text-sm mt-2 whitespace-pre-line border border-gray-100">
+                {modal.data.breakdown}
+              </div>
+              <hr className="my-2" />
+              <div className="flex justify-between items-center text-xl font-bold text-primary">
+                <span>Total Cost:</span>
+                <span>৳{modal.data.totalCost}</span>
+              </div>
+            </div>
+            <div className="flex gap-4 mt-6">
+              <button
+                className="flex-1 py-2 rounded-lg bg-primary cursor-pointer text-white font-semibold hover:bg-primary transition"
+                onClick={handleProceed}
+              >
+                Proceed to Payment
+              </button>
+              <button
+                className="flex-1 py-2 rounded-lg bg-gray-200 text-gray-700 font-semibold hover:bg-gray-300 transition cursor-pointer"
+                onClick={handleModalClose}
+              >
+                Continue Editing
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
       <form
         className="w-full max-w-6xl bg-white rounded-3xl  px-8 md:px-16 py-10 space-y-10 border border-green-100"
         onSubmit={handleSubmit(onSubmit)}
@@ -277,9 +332,6 @@ const Pricing = () => {
                 })}
               >
                 <option value="">Select Center</option>
-                {/* step down the to get districts by region
-                
-                */}
                 {getDistrictsByRegion(senderRegion).map((district) => (
                   <option key={district} value={district}>
                     {district}
@@ -382,7 +434,6 @@ const Pricing = () => {
                 })}
               >
                 <option value="">Select Center</option>
-                {/* step down the to get districts by region */}
                 {getDistrictsByRegion(receiverRegion).map((district) => (
                   <option key={district} value={district}>
                     {district}
