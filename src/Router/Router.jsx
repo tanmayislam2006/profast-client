@@ -24,6 +24,7 @@ const router = createBrowserRouter([
         path: "/coverage",
         Component: Coverage,
         loader: () => fetch("./coverageArea.json"),
+        hydrateFallbackElement: <p className="text-center">Data is loading</p>,
       },
       {
         path: "/about",
@@ -36,6 +37,8 @@ const router = createBrowserRouter([
             <Pricing />
           </PrivateRouter>
         ),
+        loader: () => fetch("./coverageArea.json"),
+        hydrateFallbackElement: <p className="text-center">Data is loading</p>,
       },
     ],
   },

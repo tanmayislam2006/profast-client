@@ -1,22 +1,26 @@
 import React from "react";
 import { useForm } from "react-hook-form";
-
-const regionOptions = [
-  { value: "", label: "Select Region" },
-  { value: "Dhaka", label: "Dhaka" },
-  { value: "Chittagong", label: "Chittagong" },
-  { value: "DummyRegion1", label: "Dummy Region 1" },
-  { value: "DummyRegion2", label: "Dummy Region 2" },
-];
-const centerOptions = [
-  { value: "", label: "Select Service Center" },
-  { value: "Dhaka Central", label: "Dhaka Central" },
-  { value: "Chittagong South", label: "Chittagong South" },
-  { value: "DummyCenter1", label: "Dummy Center 1" },
-  { value: "DummyCenter2", label: "Dummy Center 2" },
-];
+import { useLoaderData } from "react-router";
+import Swal from "sweetalert2";
+import useProfastAuth from "../../Hook/useProfastAuth";
+const generateTrackingID = () => {
+    const date = new Date();
+    const datePart = date.toISOString().split("T")[0].replace(/-/g, "");
+    const rand = Math.random().toString(36).substring(2, 7).toUpperCase();
+    return `PCL-${datePart}-${rand}`;
+};
 
 const Pricing = () => {
+  const { user: firebaseUser } = useProfastAuth();
+  const serviceArea = useLoaderData();
+  // just get the region name from servicearea data
+  // to use in the select option
+  const uniqueRegions = [...new Set(serviceArea.map((w) => w.region))];
+  // get the districts by region
+  // to use in the select option
+  const getDistrictsByRegion = (region) =>
+    serviceArea.filter((w) => w.region === region).map((w) => w.district);
+
   const {
     register,
     handleSubmit,
@@ -24,9 +28,92 @@ const Pricing = () => {
     formState: { errors },
   } = useForm();
   const onSubmit = (data) => {
-    console.log(data);
+    const weight = parseFloat(data.weight) || 0;
+    const isSameDistrict = data.sender_center === data.receiver_center;
+
+    let baseCost = 0;
+    let extraCost = 0;
+    let breakdown = "";
+
+    if (data.type === "document") {
+      baseCost = isSameDistrict ? 60 : 80;
+      breakdown = `Document delivery ${
+        isSameDistrict ? "within" : "outside"
+      } the district.`;
+    } else {
+      if (weight <= 3) {
+        baseCost = isSameDistrict ? 110 : 150;
+        breakdown = `Non-document up to 3kg ${
+          isSameDistrict ? "within" : "outside"
+        } the district.`;
+      } else {
+        const extraKg = weight - 3;
+        const perKgCharge = (extraKg * 40).toFixed(1);
+        const districtExtra = isSameDistrict ? 0 : 40;
+        baseCost = isSameDistrict ? 110 : 150;
+        extraCost = perKgCharge + districtExtra;
+
+        breakdown = `
+        Non-document over 3kg ${
+          isSameDistrict ? "within" : "outside"
+        } the district.<br/>
+        Extra charge: ৳40 x ${extraKg.toFixed(1)}kg = ৳${perKgCharge}<br/>
+        ${districtExtra ? "+ ৳40 extra for outside district delivery" : ""}
+      `;
+      }
+    }
+
+    const totalCost = baseCost + extraCost;
+
+    Swal.fire({
+      title: "Delivery Cost Breakdown",
+      icon: "info",
+      html: `
+      <div class="text-left text-base space-y-2">
+        <p><strong>Parcel Type:</strong> ${data.type}</p>
+        <p><strong>Weight:</strong> ${weight} kg</p>
+        <p><strong>Delivery Zone:</strong> ${
+          isSameDistrict ? "Within Same District" : "Outside District"
+        }</p>
+        <hr class="my-2"/>
+        <p><strong>Base Cost:</strong> ৳${baseCost}</p>
+        ${
+          extraCost > 0
+            ? `<p><strong>Extra Charges:</strong> ৳${extraCost}</p>`
+            : ""
+        }
+        <div class="text-gray-500 text-sm">${breakdown}</div>
+        <hr class="my-2"/>
+        <p class="text-xl font-bold text-green-600">Total Cost: ৳${totalCost}</p>
+      </div>
+    `,
+      showDenyButton: true,
+      confirmButtonText: "Proceed to Payment",
+      denyButtonText: "Continue Editing",
+      confirmButtonColor: "#16a34a",
+      denyButtonColor: "#d3d3d3",
+      customClass: {
+        popup: "rounded-xl shadow-md px-6 py-6 ",
+      },
+    }).then((result) => {
+      if (result.isConfirmed) {
+        const parcelData = {
+          ...data,
+          cost: totalCost,
+          created_by: firebaseUser.email,
+          payment_status: "unpaid",
+          delivery_status: "not_collected",
+          creation_date: new Date().toISOString(),
+          tracking_id: generateTrackingID(),
+        };
+
+        console.log("Ready for payment:", parcelData);
+      }
+    });
   };
   const parcelType = watch("type");
+  const senderRegion = watch("sender_region");
+  const receiverRegion = watch("receiver_region");
 
   return (
     <div className="min-h-screen py-10 flex items-center justify-center">
@@ -44,9 +131,7 @@ const Pricing = () => {
 
         {/* Parcel Info */}
         <div className="bg-green-50 p-6 rounded-2xl shadow space-y-5">
-          <h3 className="font-semibold text-xl mb-2">
-            Parcel Info
-          </h3>
+          <h3 className="font-semibold text-xl mb-2">Parcel Info</h3>
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
             {/* Parcel Name */}
             <div>
@@ -71,7 +156,9 @@ const Pricing = () => {
               <div className="flex gap-4 mt-1">
                 <label className="flex items-center gap-2">
                   <input
-                    {...register("type", { required: "Parcel type is required" })}
+                    {...register("type", {
+                      required: "Parcel type is required",
+                    })}
                     type="radio"
                     value="document"
                     name="type"
@@ -81,7 +168,9 @@ const Pricing = () => {
                 </label>
                 <label className="flex items-center gap-2">
                   <input
-                    {...register("type", { required: "Parcel type is required" })}
+                    {...register("type", {
+                      required: "Parcel type is required",
+                    })}
                     type="radio"
                     value="non-document"
                     name="type"
@@ -103,7 +192,7 @@ const Pricing = () => {
                 type="number"
                 step="0.1"
                 disabled={parcelType === "document"}
-                {...register("weight", { required: "Weight is required" })}
+                {...register("weight")}
                 className={`input input-bordered w-full ${
                   errors.weight ? "border-red-400" : ""
                 }`}
@@ -133,7 +222,9 @@ const Pricing = () => {
                 }`}
                 placeholder="Name"
                 name="sender_name"
-                {...register("sender_name", { required: "Sender name is required" })}
+                {...register("sender_name", {
+                  required: "Sender name is required",
+                })}
               />
               {errors.sender_name && (
                 <span className="text-red-500 text-xs">
@@ -146,7 +237,9 @@ const Pricing = () => {
                 }`}
                 placeholder="Contact"
                 name="sender_contact"
-                {...register("sender_contact", { required: "Sender contact is required" })}
+                {...register("sender_contact", {
+                  required: "Sender contact is required",
+                })}
               />
               {errors.sender_contact && (
                 <span className="text-red-500 text-xs">
@@ -158,11 +251,14 @@ const Pricing = () => {
                   errors.sender_region ? "border-red-400" : ""
                 }`}
                 name="sender_region"
-                {...register("sender_region", { required: "Sender region is required" })}
+                {...register("sender_region", {
+                  required: "Sender region is required",
+                })}
               >
-                {regionOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
+                <option value="">Select Region</option>
+                {uniqueRegions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
                   </option>
                 ))}
               </select>
@@ -176,11 +272,17 @@ const Pricing = () => {
                   errors.sender_center ? "border-red-400" : ""
                 }`}
                 name="sender_center"
-                {...register("sender_center", { required: "Sender center is required" })}
+                {...register("sender_center", {
+                  required: "Sender center is required",
+                })}
               >
-                {centerOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
+                <option value="">Select Center</option>
+                {/* step down the to get districts by region
+                
+                */}
+                {getDistrictsByRegion(senderRegion).map((district) => (
+                  <option key={district} value={district}>
+                    {district}
                   </option>
                 ))}
               </select>
@@ -195,7 +297,9 @@ const Pricing = () => {
                 }`}
                 placeholder="Address"
                 name="sender_address"
-                {...register("sender_address", { required: "Sender address is required" })}
+                {...register("sender_address", {
+                  required: "Sender address is required",
+                })}
               />
               {errors.sender_address && (
                 <span className="text-red-500 text-xs">
@@ -223,7 +327,9 @@ const Pricing = () => {
                 }`}
                 placeholder="Name"
                 name="receiver_name"
-                {...register("receiver_name", { required: "Receiver name is required" })}
+                {...register("receiver_name", {
+                  required: "Receiver name is required",
+                })}
               />
               {errors.receiver_name && (
                 <span className="text-red-500 text-xs">
@@ -236,7 +342,9 @@ const Pricing = () => {
                 }`}
                 placeholder="Contact"
                 name="receiver_contact"
-                {...register("receiver_contact", { required: "Receiver contact is required" })}
+                {...register("receiver_contact", {
+                  required: "Receiver contact is required",
+                })}
               />
               {errors.receiver_contact && (
                 <span className="text-red-500 text-xs">
@@ -248,11 +356,14 @@ const Pricing = () => {
                   errors.receiver_region ? "border-red-400" : ""
                 }`}
                 name="receiver_region"
-                {...register("receiver_region", { required: "Receiver region is required" })}
+                {...register("receiver_region", {
+                  required: "Receiver region is required",
+                })}
               >
-                {regionOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
+                <option value="">Select Region</option>
+                {uniqueRegions.map((opt) => (
+                  <option key={opt} value={opt}>
+                    {opt}
                   </option>
                 ))}
               </select>
@@ -266,11 +377,15 @@ const Pricing = () => {
                   errors.receiver_center ? "border-red-400" : ""
                 }`}
                 name="receiver_center"
-                {...register("receiver_center", { required: "Receiver center is required" })}
+                {...register("receiver_center", {
+                  required: "Receiver center is required",
+                })}
               >
-                {centerOptions.map((opt) => (
-                  <option key={opt.value} value={opt.value}>
-                    {opt.label}
+                <option value="">Select Center</option>
+                {/* step down the to get districts by region */}
+                {getDistrictsByRegion(receiverRegion).map((district) => (
+                  <option key={district} value={district}>
+                    {district}
                   </option>
                 ))}
               </select>
@@ -285,7 +400,9 @@ const Pricing = () => {
                 }`}
                 placeholder="Address"
                 name="receiver_address"
-                {...register("receiver_address", { required: "Receiver address is required" })}
+                {...register("receiver_address", {
+                  required: "Receiver address is required",
+                })}
               />
               {errors.receiver_address && (
                 <span className="text-red-500 text-xs">
@@ -304,10 +421,7 @@ const Pricing = () => {
 
         {/* Submit Button */}
         <div className="text-center w-3/5 mx-auto mt-8">
-          <button
-            className="btn btn-primary font-bold w-full "
-            type="submit"
-          >
+          <button className="btn btn-primary font-bold w-full " type="submit">
             Submit
           </button>
         </div>

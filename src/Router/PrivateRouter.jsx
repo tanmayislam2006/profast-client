@@ -5,7 +5,7 @@ const PrivateRouter = ({ children }) => {
   const { firebaseUser, loading } = useProfastAuth();
   const location = useLocation();
   if (loading) {
-    return <p>Data is loading</p>;
+    return <p className="text-center">Data is loading</p>;
   }
   if (!firebaseUser) {
     return <Navigate to={"/login"} state={location.pathname} />;

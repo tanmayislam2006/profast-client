@@ -15,7 +15,6 @@ const customIcon = new L.Icon({
   iconSize: [25, 41],
   iconAnchor: [12, 41],
 });
-console.log(customIcon);
 const FlyToLocation = ({ position }) => {
   // get position as a props so that region use {}
   const map = useMap();
