@@ -1,244 +1,153 @@
-import React, { useState } from "react";
+import React from "react";
 
 const Pricing = () => {
-  const [parcelType, setParcelType] = useState("document");
-  const [form, setForm] = useState({
-    email: "",
-    email2: "",
-    senderEmail: "",
-    senderWarehouse: "",
-    senderEmail2: "",
-    senderEmail3: "",
-    senderRegion: "",
-    pickupInstruction: "",
-    receiverEmail: "",
-    receiverWarehouse: "",
-    receiverEmail2: "",
-    receiverEmail3: "",
-    receiverRegion: "",
-    deliveryInstruction: "",
-  });
-
-  const handleChange = (e) => {
-    setForm({ ...form, [e.target.name]: e.target.value });
-  };
-
   return (
     <div className="bg-[#f6f8f9] min-h-screen py-8">
-      <div className="max-w-6xl mx-auto bg-white rounded-3xl shadow-md px-10 py-12">
-        <h1 className="text-4xl font-bold mb-6">Add Parcel</h1>
-        <hr className="mb-8" />
-        <div className="text-xl font-semibold mb-6">Enter your parcel details</div>
-        <div className="flex items-center gap-8 mb-8">
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="parcelType"
-              value="document"
-              checked={parcelType === "document"}
-              onChange={() => setParcelType("document")}
-              className="accent-[#ACC857] w-5 h-5"
-            />
-            <span className="ml-2 text-[#2E7D32] font-medium">Document</span>
-          </label>
-          <label className="flex items-center cursor-pointer">
-            <input
-              type="radio"
-              name="parcelType"
-              value="not-document"
-              checked={parcelType === "not-document"}
-              onChange={() => setParcelType("not-document")}
-              className="accent-[#ACC857] w-5 h-5"
-            />
-            <span className="ml-2 text-gray-700 font-medium">Not-Document</span>
-          </label>
+      <form className="max-w-6xl mx-auto space-y-8 bg-white rounded-3xl shadow-md px-6 md:px-10 py-8 md:py-12">
+        {/* Heading */}
+        <div className="text-center">
+          <h2 className="text-3xl md:text-4xl font-bold mb-1">Send a Parcel</h2>
+          <p className="text-gray-500">Fill in the details below</p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 mb-8">
-          <div>
-            <label className="block font-medium mb-1">Email</label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-[#ACC857]"
-              type="email"
-              name="email"
-              placeholder="Email"
-              value={form.email}
-              onChange={handleChange}
-            />
-          </div>
-          <div>
-            <label className="block font-medium mb-1">Email</label>
-            <input
-              className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none focus:ring-2 focus:ring-[#ACC857]"
-              type="email"
-              name="email2"
-              placeholder="Email"
-              value={form.email2}
-              onChange={handleChange}
-            />
-          </div>
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-          {/* Sender Details */}
-          <div>
-            <div className="font-bold text-lg mb-4">Sender Details</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-medium mb-1">Email</label>
-                <input
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  type="email"
-                  name="senderEmail"
-                  placeholder="Email"
-                  value={form.senderEmail}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Sender Pickup Wire house</label>
-                <select
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  name="senderWarehouse"
-                  value={form.senderWarehouse}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Wire house</option>
-                  <option value="wh1">Warehouse 1</option>
-                  <option value="wh2">Warehouse 2</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Email</label>
-                <input
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  type="email"
-                  name="senderEmail2"
-                  placeholder="Email"
-                  value={form.senderEmail2}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Email</label>
-                <input
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  type="email"
-                  name="senderEmail3"
-                  placeholder="Email"
-                  value={form.senderEmail3}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block font-medium mb-1">Your Region</label>
-                <select
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  name="senderRegion"
-                  value={form.senderRegion}
-                  onChange={handleChange}
-                >
-                  <option value="">Select your region</option>
-                  <option value="region1">Region 1</option>
-                  <option value="region2">Region 2</option>
-                </select>
-              </div>
-              <div className="md:col-span-2">
-                <label className="block font-medium mb-1">Pickup Instruction</label>
-                <textarea
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] min-h-[60px] focus:outline-none"
-                  name="pickupInstruction"
-                  placeholder="Pickup Instruction"
-                  value={form.pickupInstruction}
-                  onChange={handleChange}
-                />
+
+        {/* Parcel Info */}
+        <div className="p-4 rounded-xl shadow space-y-4 bg-neutral-50 py-5">
+          <h3 className="font-semibold text-xl">Parcel Info</h3>
+          <div className="space-y-4">
+            {/* Parcel Name */}
+            <div>
+              <label className="label">Parcel Name</label>
+              <input
+                className="input input-bordered w-full"
+                placeholder="Describe your parcel"
+                name="title"
+              />
+            </div>
+            {/* Type */}
+            <div>
+              <label className="label">Type</label>
+              <div className="flex gap-4">
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="document"
+                    name="type"
+                    className="radio"
+                  />
+                  Document
+                </label>
+                <label className="flex items-center gap-2">
+                  <input
+                    type="radio"
+                    value="non-document"
+                    name="type"
+                    className="radio"
+                  />
+                  Non-Document
+                </label>
               </div>
             </div>
-          </div>
-          {/* Receiver Details */}
-          <div>
-            <div className="font-bold text-lg mb-4">Receiver Details</div>
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div>
-                <label className="block font-medium mb-1">Email</label>
-                <input
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  type="email"
-                  name="receiverEmail"
-                  placeholder="Email"
-                  value={form.receiverEmail}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Receiver Delivery Wire house</label>
-                <select
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  name="receiverWarehouse"
-                  value={form.receiverWarehouse}
-                  onChange={handleChange}
-                >
-                  <option value="">Select Wire house</option>
-                  <option value="wh1">Warehouse 1</option>
-                  <option value="wh2">Warehouse 2</option>
-                </select>
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Email</label>
-                <input
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  type="email"
-                  name="receiverEmail2"
-                  placeholder="Email"
-                  value={form.receiverEmail2}
-                  onChange={handleChange}
-                />
-              </div>
-              <div>
-                <label className="block font-medium mb-1">Email</label>
-                <input
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  type="email"
-                  name="receiverEmail3"
-                  placeholder="Email"
-                  value={form.receiverEmail3}
-                  onChange={handleChange}
-                />
-              </div>
-              <div className="md:col-span-2">
-                <label className="block font-medium mb-1">Receiver Region</label>
-                <select
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] focus:outline-none"
-                  name="receiverRegion"
-                  value={form.receiverRegion}
-                  onChange={handleChange}
-                >
-                  <option value="">Select your region</option>
-                  <option value="region1">Region 1</option>
-                  <option value="region2">Region 2</option>
-                </select>
-              </div>
-              <div className="md:col-span-2">
-                <label className="block font-medium mb-1">Delivery Instruction</label>
-                <textarea
-                  className="w-full border border-gray-200 rounded-lg px-4 py-2 bg-[#fafafa] min-h-[60px] focus:outline-none"
-                  name="deliveryInstruction"
-                  placeholder="Delivery Instruction"
-                  value={form.deliveryInstruction}
-                  onChange={handleChange}
-                />
-              </div>
+            {/* Weight */}
+            <div>
+              <label className="label">Weight (kg)</label>
+              <input
+                type="number"
+                step="0.1"
+                className="input input-bordered w-full"
+                placeholder="Enter weight"
+                name="weight"
+              />
             </div>
           </div>
         </div>
-        <div className="text-gray-700 text-base mt-4 mb-8">
+
+        {/* Sender & Receiver Info */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          {/* Sender Info */}
+          <div className="p-4 rounded-xl shadow-md space-y-4 bg-neutral-50">
+            <h3 className="font-semibold text-xl">Sender Info</h3>
+            <div className="grid grid-cols-1 gap-4">
+              <input
+                className="input input-bordered w-full"
+                placeholder="Name"
+                name="sender_name"
+              />
+              <input
+                className="input input-bordered w-full"
+                placeholder="Contact"
+                name="sender_contact"
+              />
+              <select className="select select-bordered w-full" name="sender_region">
+                <option value="">Select Region</option>
+                <option value="Dhaka">Dhaka</option>
+                <option value="Chittagong">Chittagong</option>
+              </select>
+              <select className="select select-bordered w-full" name="sender_center">
+                <option value="">Select Service Center</option>
+                <option value="Dhaka Central">Dhaka Central</option>
+                <option value="Chittagong South">Chittagong South</option>
+              </select>
+              <input
+                className="input input-bordered w-full"
+                placeholder="Address"
+                name="sender_address"
+              />
+              <textarea
+                className="textarea textarea-bordered w-full"
+                placeholder="Pickup Instruction"
+                name="pickup_instruction"
+              />
+            </div>
+          </div>
+
+          {/* Receiver Info */}
+          <div className="p-4 rounded-xl shadow-md space-y-4 bg-neutral-50">
+            <h3 className="font-semibold text-xl">Receiver Info</h3>
+            <div className="grid grid-cols-1 gap-4">
+              <input
+                className="input input-bordered w-full"
+                placeholder="Name"
+                name="receiver_name"
+              />
+              <input
+                className="input input-bordered w-full"
+                placeholder="Contact"
+                name="receiver_contact"
+              />
+              <select className="select select-bordered w-full" name="receiver_region">
+                <option value="">Select Region</option>
+                <option value="Dhaka">Dhaka</option>
+                <option value="Chittagong">Chittagong</option>
+              </select>
+              <select className="select select-bordered w-full" name="receiver_center">
+                <option value="">Select Service Center</option>
+                <option value="Dhaka Central">Dhaka Central</option>
+                <option value="Chittagong South">Chittagong South</option>
+              </select>
+              <input
+                className="input input-bordered w-full"
+                placeholder="Address"
+                name="receiver_address"
+              />
+              <textarea
+                className="textarea textarea-bordered w-full"
+                placeholder="Delivery Instruction"
+                name="delivery_instruction"
+              />
+            </div>
+          </div>
+        </div>
+
+        {/* Submit Button */}
+        <div className="text-center w-3/5 mx-auto ">
+          <button className="btn btn-primary text-black w-full" type="submit">
+            Submit
+          </button>
+        </div>
+        <div className="text-gray-700 text-base text-center">
           * PickUp Time 4pm-7pm Approx.
         </div>
-        <button
-          className="bg-[#d2f365] text-[#222] font-semibold rounded-md px-10 py-3 mt-2 transition disabled:opacity-60"
-          type="button"
-        >
-          Continue
-        </button>
-      </div>
+      </form>
     </div>
   );
 };
