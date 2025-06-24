@@ -60,12 +60,16 @@ const router = createBrowserRouter([
   },
   {
     path: "/dashboard",
-    element: <PrivateRouter><DashboardLayout /></PrivateRouter>,
+    element: (
+      <PrivateRouter>
+        <DashboardLayout />
+      </PrivateRouter>
+    ),
     children: [
       {
-        path: 'myParcels',
-        Component: MyPercel
-      }
+        path: "myParcels",
+        Component: MyPercel,
+      },
     ],
   },
 ]);

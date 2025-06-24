@@ -16,7 +16,7 @@ const Pricing = () => {
   const { firebaseUser } = useProfastAuth();
   const [percelSendData, setParcelSendData] = useState(null);
   const serviceArea = useLoaderData();
-  const axiosSecure=useAxiosSecure()
+  const axiosSecure = useAxiosSecure();
   const uniqueRegions = [...new Set(serviceArea.map((w) => w.region))];
   const getDistrictsByRegion = (region) =>
     serviceArea.filter((w) => w.region === region).map((w) => w.district);
@@ -75,9 +75,7 @@ const Pricing = () => {
       creation_date: new Date().toLocaleDateString("en-GB"),
       tracking_id: generateTrackingID(),
     });
-    axiosSecure.post('/addParcel',{...percelSendData}).then(res=>{
-      console.log(res.data);
-    })
+
     setModal({
       open: true,
       data: {
@@ -97,11 +95,15 @@ const Pricing = () => {
     // close the modal
     setModal({ open: false, data: null });
     // You can add your payment logic here
-    Swal.fire({
-      title: "Payment Proceed",
-      text: "",
-      icon: "success",
-      confirmButtonText: "OK",
+    axiosSecure.post("/addParcel", { ...percelSendData }).then((res) => {
+      if (res.data) {
+        Swal.fire({
+          title: "Payment Proceed",
+          text: "",
+          icon: "success",
+          confirmButtonText: "OK",
+        });
+      }
     });
   };
 
