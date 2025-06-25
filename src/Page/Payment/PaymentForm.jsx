@@ -1,67 +1,111 @@
-// CheckoutForm.jsx
+// PaymentForm.jsx
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import { useState } from "react";
 import axios from "axios";
+import { useParams } from "react-router";
+import { useQuery } from "@tanstack/react-query";
+import useAxiosSecure from "../../Hook/useAxiosSecure";
+import { useState } from "react";
 
-const PaymentForm = ({ amount }) => {
-  const stripe = useStripe();
-  const elements = useElements();
+const PaymentForm = () => {
+  const stripe = useStripe(); // Stripe instance for interacting with Stripe APIs
+  const elements = useElements(); // Element instance to access CardElement
+  const axiosSecure = useAxiosSecure(); // Custom hook for secure Axios with JWT
 
+  const { id } = useParams(); // Get parcel ID from URL
+
+  // Fetch the parcel information for which the user is paying
+  const { data: parcelInfo = {} } = useQuery({
+    queryKey: ["parcel", id],
+    queryFn: async () => {
+      const res = await axiosSecure.get(`/parcels/${id}`);
+      return res.data;
+    },
+  });
+
+  // State for error/success messages and loading status
   const [error, setError] = useState("");
   const [success, setSuccess] = useState("");
   const [processing, setProcessing] = useState(false);
 
+  // Convert cost to cents or paisa format for Stripe
+  const amountInCents = parseInt(parcelInfo?.cost * 100); // Ensure integer
+
+  // Handle form submission
   const handleSubmit = async (e) => {
     e.preventDefault();
 
-    if (!stripe || !elements) return;
+    if (!stripe || !elements) {
+      return; // Stripe.js has not yet loaded
+    }
+
+    const card = elements.getElement(CardElement);
+    if (!card) {
+      setError("Card element not found");
+      return;
+    }
 
     setProcessing(true);
-    setError("");
-    setSuccess("");
 
-    // Step 1: Call your backend to create a payment intent
-    const { data } = await axios.post("http://localhost:5000/create-payment-intent", {
-      amount, // amount in cents or paisa (e.g., 500 = $5 or ৳5)
+    // Step 1: Create payment method
+    const { error: methodError } = await stripe.createPaymentMethod({
+      type: "card",
+      card,
+    });
+
+    if (methodError) {
+      setError(methodError.message);
+      setProcessing(false);
+      return;
+    } else {
+      setError(""); // Clear any previous error
+    }
+
+    // Step 2: Get clientSecret from backend (creates PaymentIntent)
+    const { data } = await axiosSecure.post("/create-payment-intent", {
+      amount: amountInCents, // Amount in cents/paisa
     });
 
     const clientSecret = data.clientSecret;
 
-    // Step 2: Confirm payment using Stripe
+    // Step 3: Confirm card payment with Stripe
     const result = await stripe.confirmCardPayment(clientSecret, {
       payment_method: {
-        card: elements.getElement(CardElement),
+        card: card,
         billing_details: {
-          name: "Customer Name", // optionally dynamic
+          name: "Customer Name", // Optional: make dynamic if needed
         },
       },
     });
 
     if (result.error) {
       setError(result.error.message);
-    } else {
-      if (result.paymentIntent.status === "succeeded") {
-        setSuccess("🎉 Payment successful!");
-      }
+    } else if (result.paymentIntent.status === "succeeded") {
+      setSuccess("🎉 Payment successful!");
     }
 
     setProcessing(false);
   };
 
   return (
-    <form onSubmit={handleSubmit} className="w-4/5 mx-auto p-4 border rounded shadow flex flex-col gap-10 justify-center">
-      <CardElement />
-      <button
-        type="submit"
-        className="bg-blue-500 text-white px-4 py-2 rounded mt-4"
-        disabled={!stripe || processing}
+    <div className="w-4/5 mx-auto mt-10">
+      <h2 className="text-2xl font-semibold mb-4 text-center text-primary">Pay for Parcel</h2>
+      <form
+        onSubmit={handleSubmit}
+        className="w-full space-y-10 p-4 border rounded shadow flex flex-col gap-4 bg-white my-10"
       >
-        {processing ? "Processing..." : "Pay Now"}
-      </button>
+        <CardElement />
+        <button
+          type="submit"
+          className="btn btn-primary w-full mx-auto"
+          disabled={!stripe || processing}
+        >
+          {processing ? "Processing..." : `Pay ${parcelInfo?.cost || 0}`}
+        </button>
 
-      {error && <p className="text-red-500 mt-2">{error}</p>}
-      {success && <p className="text-green-600 mt-2">{success}</p>}
-    </form>
+        {error && <p className="text-red-500 mt-2 text-sm">{error}</p>}
+        {success && <p className="text-green-600 mt-2 text-sm">{success}</p>}
+      </form>
+    </div>
   );
 };
 
