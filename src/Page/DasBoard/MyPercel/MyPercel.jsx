@@ -10,11 +10,13 @@ import {
   FaTimes,
 } from "react-icons/fa";
 import Swal from "sweetalert2";
+import { useNavigate } from "react-router";
 
 const MyPercel = () => {
   const { firebaseUser } = useProfastAuth();
   const axiosSecure = useAxiosSecure();
   const [parcelDetails, setParcelDetails] = useState(null);
+  const navigate = useNavigate();
   const {
     data: myPercels = [],
     isLoading,
@@ -66,6 +68,22 @@ const MyPercel = () => {
   const handleDetails = (parcel) => {
     setParcelDetails(parcel);
   };
+  const handlePayment = (parcel) => {
+    Swal.fire({
+      title: "Payment",
+      text: `Proceed to payment for parcel with Tracking ID: ${parcel.tracking_id}`,
+      icon: "info",
+      showCancelButton: true,
+      confirmButtonText: "Pay Now",
+      cancelButtonText: "Cancel",
+      confirmButtonColor: "#4f46e5", // indigo-600
+      cancelButtonColor: "#6b7280", // gray-500
+    }).then((result) => {
+      if (result.isConfirmed) {
+        navigate(`/dashboard/payment/${parcel._id}`);
+      }
+    });
+  };
   const closeModal = () => setParcelDetails(null);
 
   return (
@@ -94,18 +112,22 @@ const MyPercel = () => {
                   <span className="font-mono">{parcelDetails.tracking_id}</span>
                 </div>
                 <div className="mb-2">
-                  <span className="font-semibold">Title:</span> {parcelDetails.title}
+                  <span className="font-semibold">Title:</span>{" "}
+                  {parcelDetails.title}
                 </div>
                 <div className="mb-2">
                   <span className="font-semibold">Type:</span>{" "}
                   <span className="capitalize">{parcelDetails.type}</span>
                 </div>
                 <div className="mb-2">
-                  <span className="font-semibold">Weight:</span> {parcelDetails.weight || "-"} kg
+                  <span className="font-semibold">Weight:</span>{" "}
+                  {parcelDetails.weight || "-"} kg
                 </div>
                 <div className="mb-2">
                   <span className="font-semibold">Cost:</span>{" "}
-                  <span className="text-primary font-bold">৳{parcelDetails.cost}</span>
+                  <span className="text-primary font-bold">
+                    ৳{parcelDetails.cost}
+                  </span>
                 </div>
                 <div className="mb-2">
                   <span className="font-semibold">Status:</span>{" "}
@@ -116,7 +138,9 @@ const MyPercel = () => {
                         : "text-yellow-700"
                     }`}
                   >
-                    {parcelDetails.payment_status === "paid" ? "Paid" : "Unpaid"}
+                    {parcelDetails.payment_status === "paid"
+                      ? "Paid"
+                      : "Unpaid"}
                   </span>
                 </div>
                 <div className="mb-2">
@@ -126,42 +150,52 @@ const MyPercel = () => {
                   </span>
                 </div>
                 <div className="mb-2">
-                  <span className="font-semibold">Created:</span> {parcelDetails.creation_date}
+                  <span className="font-semibold">Created:</span>{" "}
+                  {parcelDetails.creation_date}
                 </div>
               </div>
               <div>
                 <div className="mb-2">
-                  <span className="font-semibold">Sender:</span> {parcelDetails.sender_name}
+                  <span className="font-semibold">Sender:</span>{" "}
+                  {parcelDetails.sender_name}
                 </div>
                 <div className="mb-2 text-xs text-gray-500">
                   {parcelDetails.sender_region}, {parcelDetails.sender_center}
                 </div>
                 <div className="mb-2">
-                  <span className="font-semibold">Sender Contact:</span> {parcelDetails.sender_contact}
+                  <span className="font-semibold">Sender Contact:</span>{" "}
+                  {parcelDetails.sender_contact}
                 </div>
                 <div className="mb-2">
-                  <span className="font-semibold">Sender Address:</span> {parcelDetails.sender_address}
+                  <span className="font-semibold">Sender Address:</span>{" "}
+                  {parcelDetails.sender_address}
                 </div>
                 <div className="mb-2">
-                  <span className="font-semibold">Receiver:</span> {parcelDetails.receiver_name}
+                  <span className="font-semibold">Receiver:</span>{" "}
+                  {parcelDetails.receiver_name}
                 </div>
                 <div className="mb-2 text-xs text-gray-500">
-                  {parcelDetails.receiver_region}, {parcelDetails.receiver_center}
+                  {parcelDetails.receiver_region},{" "}
+                  {parcelDetails.receiver_center}
                 </div>
                 <div className="mb-2">
-                  <span className="font-semibold">Receiver Contact:</span> {parcelDetails.receiver_contact}
+                  <span className="font-semibold">Receiver Contact:</span>{" "}
+                  {parcelDetails.receiver_contact}
                 </div>
                 <div className="mb-2">
-                  <span className="font-semibold">Receiver Address:</span> {parcelDetails.receiver_address}
+                  <span className="font-semibold">Receiver Address:</span>{" "}
+                  {parcelDetails.receiver_address}
                 </div>
                 {parcelDetails.pickup_instruction && (
                   <div className="mb-2">
-                    <span className="font-semibold">Pickup Instruction:</span> {parcelDetails.pickup_instruction}
+                    <span className="font-semibold">Pickup Instruction:</span>{" "}
+                    {parcelDetails.pickup_instruction}
                   </div>
                 )}
                 {parcelDetails.delivery_instruction && (
                   <div className="mb-2">
-                    <span className="font-semibold">Delivery Instruction:</span> {parcelDetails.delivery_instruction}
+                    <span className="font-semibold">Delivery Instruction:</span>{" "}
+                    {parcelDetails.delivery_instruction}
                   </div>
                 )}
               </div>
@@ -255,6 +289,7 @@ const MyPercel = () => {
                 </button>
                 {parcel.payment_status === "unpaid" ? (
                   <button
+                    onClick={() => handlePayment(parcel)}
                     title="Pay Now"
                     className="p-2 rounded hover:bg-green-100 text-primary"
                   >

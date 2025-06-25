@@ -11,6 +11,7 @@ import PrivateRouter from "./PrivateRouter";
 import Pricing from "../Page/Pricing/Pricing";
 import DashboardLayout from "../Layout/DashboardLayout";
 import MyPercel from "../Page/DasBoard/MyPercel/MyPercel";
+import Payment from "../Page/Payment/Payment";
 
 const router = createBrowserRouter([
   {
@@ -69,6 +70,10 @@ const router = createBrowserRouter([
       {
         path: "myParcels",
         Component: MyPercel,
+      },
+      {
+        path: "payment/:id",
+        Component: Payment,
       },
     ],
   },
