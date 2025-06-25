@@ -8,7 +8,7 @@ const useAxiosSecure = () => {
   // Memoize the axios instance so it's only created once
   const axiosSecure = useMemo(() => {
     return axios.create({
-      baseURL: "https://profast-server-indol.vercel.app", // A more common port number
+      baseURL: "http://localhost:5000", // A more common port number
     });
   }, []);
   // Return the fully configured axios instance

@@ -1,12 +1,15 @@
 // PaymentForm.jsx
 import { CardElement, useElements, useStripe } from "@stripe/react-stripe-js";
-import axios from "axios";
-import { useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../Hook/useAxiosSecure";
 import { useState } from "react";
+import useProfastAuth from "../../Hook/useProfastAuth";
+import Swal from "sweetalert2";
 
 const PaymentForm = () => {
+  const { firebaseUser } = useProfastAuth();
+  const navigate = useNavigate();
   const stripe = useStripe(); // Stripe instance for interacting with Stripe APIs
   const elements = useElements(); // Element instance to access CardElement
   const axiosSecure = useAxiosSecure(); // Custom hook for secure Axios with JWT
@@ -72,15 +75,26 @@ const PaymentForm = () => {
       payment_method: {
         card: card,
         billing_details: {
-          name: "Customer Name", // Optional: make dynamic if needed
+          name: `${firebaseUser?.displayName || "Customer Name"}`,
+          email: firebaseUser?.email || "customer@example.com",
         },
       },
     });
-
     if (result.error) {
+      setProcessing(false);
       setError(result.error.message);
     } else if (result.paymentIntent.status === "succeeded") {
       setSuccess("🎉 Payment successful!");
+      Swal.fire({
+        title: "Payment Successful",
+        text: `Your payment of ${parcelInfo?.cost} was successful!`,
+        icon: "success",
+        confirmButtonText: "OK",
+      }).then(() => {
+        // Redirect to another page or perform any action after success
+        navigate("/dashboard/myParcels");
+      });
+      setError("");
     }
 
     setProcessing(false);
@@ -88,7 +102,9 @@ const PaymentForm = () => {
 
   return (
     <div className="w-4/5 mx-auto mt-10">
-      <h2 className="text-2xl font-semibold mb-4 text-center text-primary">Pay for Parcel</h2>
+      <h2 className="text-2xl font-semibold mb-4 text-center text-primary">
+        Pay for Parcel
+      </h2>
       <form
         onSubmit={handleSubmit}
         className="w-full space-y-10 p-4 border rounded shadow flex flex-col gap-4 bg-white my-10"
