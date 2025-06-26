@@ -96,6 +96,7 @@ const PaymentForm = () => {
         amount: parcelInfo?.cost,
         date: new Date(),
         parcelId: id,
+        traking_id: parcelInfo?.tracking_id,
         paymentMethod: "card",
         status: "succeeded",
       };

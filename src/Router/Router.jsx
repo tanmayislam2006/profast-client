@@ -12,6 +12,7 @@ import Pricing from "../Page/Pricing/Pricing";
 import DashboardLayout from "../Layout/DashboardLayout";
 import MyPercel from "../Page/DasBoard/MyPercel/MyPercel";
 import Payment from "../Page/Payment/Payment";
+import MyPayment from "../Page/DasBoard/MyPayments/MyPayment";
 
 const router = createBrowserRouter([
   {
@@ -74,6 +75,10 @@ const router = createBrowserRouter([
       {
         path: "payment/:id",
         Component: Payment,
+      },
+      {
+        path: "myPayments",
+        Component: MyPayment,
       },
     ],
   },
