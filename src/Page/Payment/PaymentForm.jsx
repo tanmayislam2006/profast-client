@@ -75,7 +75,7 @@ const PaymentForm = () => {
       payment_method: {
         card: card,
         billing_details: {
-          name: `${firebaseUser?.displayName || "Customer Name"}`,
+          name: firebaseUser?.displayName || "Customer Name",
           email: firebaseUser?.email || "customer@example.com",
         },
       },
@@ -85,6 +85,21 @@ const PaymentForm = () => {
       setError(result.error.message);
     } else if (result.paymentIntent.status === "succeeded") {
       setSuccess("🎉 Payment successful!");
+      // Step 4: Update the parcel status in the database
+      await axiosSecure.patch(`/parcel/${id}`, {
+        payment_status: "paid", // 👈 Match field name in DB
+      });
+      // Save payment info to the DB
+      const paymentInfo = {
+        transactionId: result.paymentIntent.id,
+        email: firebaseUser?.email,
+        amount: parcelInfo?.cost,
+        date: new Date(),
+        parcelId: id,
+        paymentMethod: "card",
+        status: "succeeded",
+      };
+      await axiosSecure.post("/payments", paymentInfo);
       Swal.fire({
         title: "Payment Successful",
         text: `Your payment of ${parcelInfo?.cost} was successful!`,

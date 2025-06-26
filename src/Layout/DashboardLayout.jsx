@@ -49,7 +49,16 @@ const DashboardLayout = () => {
             <a href="/">Home</a>
           </li>
           <li>
-            <NavLink to="/dashboard/myParcels">My Parcels</NavLink>
+            <NavLink
+              className={({ isActive }) =>
+                isActive
+                  ? "flex items-center gap-2 font-bold text-primary underline"
+                  : "flex items-center gap-2"
+              }
+              to="/dashboard/myParcels"
+            >
+              My Parcels
+            </NavLink>
           </li>
         </ul>
       </div>
