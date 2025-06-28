@@ -14,6 +14,8 @@ import MyPercel from "../Page/DasBoard/MyPercel/MyPercel";
 import Payment from "../Page/Payment/Payment";
 import MyPayment from "../Page/DasBoard/MyPayments/MyPayment";
 import BeArider from "../Page/BeARider/BeArider";
+import Approved from "../Page/DasBoard/Rider/Approved/Approved";
+import Pending from "../Page/DasBoard/Rider/Pending/Pending";
 
 const router = createBrowserRouter([
   {
@@ -92,6 +94,14 @@ const router = createBrowserRouter([
       {
         path: "myPayments",
         Component: MyPayment,
+      },
+      {
+        path: "approvedRiders",
+        Component: Approved,
+      },
+      {
+        path: "pendingRiders",
+        Component: Pending,
       },
     ],
   },

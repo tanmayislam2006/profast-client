@@ -67,6 +67,30 @@ const DashboardLayout = () => {
                   ? "flex items-center gap-2 font-bold text-primary underline"
                   : "flex items-center gap-2"
               }
+              to="/dashboard/pendingRiders"
+            >
+              Pending Riders
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                isActive
+                  ? "flex items-center gap-2 font-bold text-primary underline"
+                  : "flex items-center gap-2"
+              }
+              to="/dashboard/approvedRiders"
+            >
+              Active Riders
+            </NavLink>
+          </li>
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                isActive
+                  ? "flex items-center gap-2 font-bold text-primary underline"
+                  : "flex items-center gap-2"
+              }
               to="/dashboard/myPayments"
             >
               My Payments
