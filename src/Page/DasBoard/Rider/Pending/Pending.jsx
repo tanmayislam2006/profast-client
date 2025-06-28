@@ -27,7 +27,7 @@ const Pending = () => {
   };
 
   return (
-    <div className="overflow-x-auto w-full px-2 md:px-0">
+    <div className="overflow-x-auto w-full px-2 mt-10">
       {/* Modal */}
       {selectedRider && (
         <div className="fixed inset-0 z-50 flex items-center justify-center">
@@ -60,7 +60,7 @@ const Pending = () => {
                 </div>
               </div>
 
-              <div  className="space-y-3">
+              <div className="space-y-3">
                 <div>
                   <b>Email:</b> {selectedRider.email}
                 </div>
