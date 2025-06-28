@@ -13,6 +13,7 @@ import DashboardLayout from "../Layout/DashboardLayout";
 import MyPercel from "../Page/DasBoard/MyPercel/MyPercel";
 import Payment from "../Page/Payment/Payment";
 import MyPayment from "../Page/DasBoard/MyPayments/MyPayment";
+import BeArider from "../Page/BeARider/BeArider";
 
 const router = createBrowserRouter([
   {
@@ -44,8 +45,19 @@ const router = createBrowserRouter([
         loader: () => fetch("./coverageArea.json"),
         hydrateFallbackElement: <p className="text-center">Data is loading</p>,
       },
+      {
+        path: "/berider",
+        element: (
+          <PrivateRouter>
+            <BeArider />
+          </PrivateRouter>
+        ),
+        loader: () => fetch("./coverageArea.json"),
+        hydrateFallbackElement: <p className="text-center">Data is loading</p>,
+      },
     ],
   },
+  // authetication routes
   {
     path: "/",
     Component: AuthnticationLayout,
@@ -60,6 +72,7 @@ const router = createBrowserRouter([
       },
     ],
   },
+  // dashboard routes
   {
     path: "/dashboard",
     element: (
