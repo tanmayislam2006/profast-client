@@ -51,7 +51,7 @@ const Register = () => {
             toast.success("Registration successful!");
             navigate(location?.state || "/");
             const userData = {
-              name: result.user.name,
+              name: data.name,
               email: result.user.email,
               profileImage: image,
               uid: result.user.uid,
