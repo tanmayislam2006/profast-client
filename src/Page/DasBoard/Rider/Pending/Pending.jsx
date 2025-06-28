@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { FaCheckCircle, FaTimesCircle, FaInfoCircle } from "react-icons/fa";
 import { useQuery } from "@tanstack/react-query";
 import useAxiosSecure from "../../../../Hook/useAxiosSecure";
+import Swal from "sweetalert2";
 
 const Pending = () => {
   const axiosSecure = useAxiosSecure();
@@ -16,13 +17,23 @@ const Pending = () => {
   const [selectedRider, setSelectedRider] = useState(null);
 
   const handleApprove = async (id) => {
-    await axiosSecure.patch(`/riders/approve/${id}`);
+    await axiosSecure
+      .patch(`/updateRiderStatus/${id}?status=approved`)
+      .then((res) => {
+        if (res.data.matchedCount) {
+          Swal.fire({
+            title: "Rider Approved",
+            confirmButtonText: "OK",
+          });
+        }
+        // if(res.data.mod)
+      });
     refetch();
     setSelectedRider(null);
   };
 
   const handleReject = async (id) => {
-    await axiosSecure.patch(`/riders/reject/${id}`);
+    await axiosSecure.patch(`/updateRiderStatus/${id}?status=rejected`);
     refetch();
   };
 
