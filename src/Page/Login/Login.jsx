@@ -4,25 +4,64 @@ import { FcGoogle } from "react-icons/fc";
 import { Link, useNavigate } from "react-router";
 import useProfastAuth from "../../Hook/useProfastAuth";
 import { toast } from "react-toastify";
+import axios from "axios";
 
 const Login = () => {
   const [showPass, setShowPass] = useState(false);
-  const { googleLogin } = useProfastAuth();
+  const { googleLogin, loginUser } = useProfastAuth();
   const navigate = useNavigate();
   const handleGoogleLogin = () => {
     googleLogin().then((result) => {
       if (result.user) {
+        const user = result.user;
+        const userData = {
+          name: user.displayName,
+          email: user.email,
+          profileImage: user.photoURL,
+          uid: user.uid,
+          role: "user",
+          creationTime: user.metadata.creationTime,
+          lastSignInTime: user.metadata.lastSignInTime,
+        };
+        axios.post(
+          "https://profast-server-indol.vercel.app/register",
+          userData
+        );
         navigate(location?.state || "/");
       }
 
       toast.success("Login successful!");
     });
   };
+  const handleLogin = (e) => {
+    e.preventDefault();
+    const email = e.target.email.value;
+    const password = e.target.password.value;
 
+    if (email && password) {
+      loginUser(email, password)
+        .then((result) => {
+          if (result.user) {
+            const lastSignInTime = result?.user?.metadata?.lastSignInTime;
+            axios.patch(`http://localhost:5000/login`, {
+              lastSignInTime,
+              email: result.user.email,
+            });
+            toast.success("Login successful!");
+            navigate(location?.state || "/");
+          }
+        })
+        .catch((error) => {
+          toast.error(error.message);
+        });
+    } else {
+      toast.error("Please fill in all fields.");
+    }
+  };
   return (
     <div className="max-w-md w-full border-2 border-primary/20 rounded-2xl shadow-lg p-8 flex flex-col items-center">
       <h2 className="text-2xl font-bold text-primary mb-6">Login to Profast</h2>
-      <form className="w-full flex flex-col gap-4">
+      <form onSubmit={handleLogin} className="w-full flex flex-col gap-4">
         <input
           name="email"
           type="email"
@@ -59,8 +98,9 @@ const Login = () => {
         <div className="flex-1 h-px bg-primary/20"></div>
       </div>
       <button
-      onClick={handleGoogleLogin}
-      className="w-full cursor-pointer flex items-center justify-center gap-3 border border-primary/30 py-3 rounded-lg font-semibold text-primary ">
+        onClick={handleGoogleLogin}
+        className="w-full cursor-pointer flex items-center justify-center gap-3 border border-primary/30 py-3 rounded-lg font-semibold text-primary "
+      >
         <FcGoogle className="text-2xl" />
         Continue with Google
       </button>

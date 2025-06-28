@@ -5,7 +5,7 @@ import { FaSignInAlt } from "react-icons/fa";
 import useProfastAuth from "../../Hook/useProfastAuth";
 
 const Navbar = () => {
-  const { firebaseUser, logoutUser } = useProfastAuth();
+  const { user, firebaseUser, logoutUser } = useProfastAuth();
 
   const link = (
     <>
