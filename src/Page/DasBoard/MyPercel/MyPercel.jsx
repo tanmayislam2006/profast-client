@@ -25,7 +25,7 @@ const MyPercel = () => {
     queryKey: ["myPercels", firebaseUser?.email],
     queryFn: async () => {
       const res = await axiosSecure.get(
-        `/parcels?email=${firebaseUser?.email}`
+        `/parcels?email=${firebaseUser?.email}`,{withCredentials:true}
       );
       return res.data;
     },

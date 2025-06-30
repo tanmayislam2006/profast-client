@@ -9,7 +9,7 @@ const Pending = () => {
   const { data: pendingRiders = [], refetch } = useQuery({
     queryKey: ["allPending-Riders"],
     queryFn: async () => {
-      const response = await axiosSecure.get(`/riders?status=pending`);
+      const response = await axiosSecure.get(`/riders?status=pending`,{withCredentials:true});
       return response.data;
     },
   });
@@ -18,7 +18,11 @@ const Pending = () => {
 
   const handleApprove = async (id) => {
     await axiosSecure
-      .patch(`/updateRiderStatus/${id}?status=approved`)
+      .patch(
+        `/updateRiderStatus/${id}?status=approved`,
+        {},
+        { withCredentials: true }
+      )
       .then((res) => {
         if (res.data.matchedCount) {
           Swal.fire({
@@ -32,7 +36,11 @@ const Pending = () => {
   };
 
   const handleReject = async (id) => {
-    await axiosSecure.patch(`/updateRiderStatus/${id}?status=rejected`);
+    await axiosSecure.patch(
+      `/updateRiderStatus/${id}?status=rejected`,
+      {},
+      { withCredentials: true }
+    );
     refetch();
   };
 

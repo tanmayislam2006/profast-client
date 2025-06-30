@@ -95,7 +95,7 @@ const Pricing = () => {
     // close the modal
     setModal({ open: false, data: null });
     // You can add your payment logic here
-    axiosSecure.post("/addParcel", { ...percelSendData }).then((res) => {
+    axiosSecure.post("/addParcel", { ...percelSendData },{withCredentials:true}).then((res) => {
       if (res.data) {
         Swal.fire({
           title: "Payment Proceed",

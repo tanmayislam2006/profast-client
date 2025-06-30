@@ -36,7 +36,9 @@ const BeArider = () => {
       rider_status: "pending",
     };
     try {
-      const res = await axiosSecure.post("/riders", riderData);
+      const res = await axiosSecure.post("/riders", riderData, {
+        withCredentials: true,
+      });
       if (res.data.insertedId) {
         Swal.fire({
           title: "Success!",

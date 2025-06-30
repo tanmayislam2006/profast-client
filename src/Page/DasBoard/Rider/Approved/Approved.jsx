@@ -8,10 +8,10 @@ const Approved = () => {
   const [selectedRider, setSelectedRider] = useState(null);
 
   // Fetch all approved riders
-  const { data: approvedRiders = [], isLoading, isError, refetch } = useQuery({
+  const { data: approvedRiders = [], isLoading, isError } = useQuery({
     queryKey: ["allAprove-Riders"],
     queryFn: async () => {
-      const response = await axiosSecure.get(`/riders?status=approved`);
+      const response = await axiosSecure.get(`/riders?status=approved`,{withCredentials:true});
       return response.data;
     },
   });

@@ -20,7 +20,7 @@ const PaymentForm = () => {
   const { data: parcelInfo = {} } = useQuery({
     queryKey: ["parcel", id],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/parcels/${id}`);
+      const res = await axiosSecure.get(`/parcels/${id}`,{withCredentials:true});
       return res.data;
     },
   });

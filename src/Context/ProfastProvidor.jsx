@@ -12,6 +12,7 @@ import auth from "../Firebase/firebase.init.js";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import useAxios from "../Hook/useAxios.jsx";
+import useAxiosSecure from "../Hook/useAxiosSecure.jsx";
 const googleProvider = new GoogleAuthProvider();
 
 const ProfastProvidor = ({ children }) => {
@@ -19,6 +20,7 @@ const ProfastProvidor = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const axiosInstance = useAxios();
+  const axiosSecure=useAxiosSecure()
   const createAccount = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
@@ -51,13 +53,14 @@ const ProfastProvidor = ({ children }) => {
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, [axiosInstance]);
   const { data: userData } = useQuery({
     queryKey: ["user", firebaseUser?.email],
     enabled: !!firebaseUser?.email,
     queryFn: async () => {
-      const response = await axios.get(
-        `https://profast-server-indol.vercel.app/user/${firebaseUser.email}`
+      const response = await axiosSecure.get(
+        `/user/${firebaseUser.email}`,
+        { withCredentials: true }
       );
       return response.data;
     },
