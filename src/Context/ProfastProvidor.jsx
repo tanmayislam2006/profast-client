@@ -9,7 +9,6 @@ import {
   signOut,
 } from "firebase/auth";
 import auth from "../Firebase/firebase.init.js";
-import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
 import useAxios from "../Hook/useAxios.jsx";
 import useAxiosSecure from "../Hook/useAxiosSecure.jsx";
@@ -20,7 +19,7 @@ const ProfastProvidor = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
   const axiosInstance = useAxios();
-  const axiosSecure=useAxiosSecure()
+  const axiosSecure = useAxiosSecure();
   const createAccount = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
@@ -54,20 +53,20 @@ const ProfastProvidor = ({ children }) => {
       unsubscribe();
     };
   }, [axiosInstance]);
-  const { data: userData } = useQuery({
+  const { data: userData, isPending } = useQuery({
     queryKey: ["user", firebaseUser?.email],
     enabled: !!firebaseUser?.email,
     queryFn: async () => {
-      const response = await axiosSecure.get(
-        `/user/${firebaseUser.email}`,
-        { withCredentials: true }
-      );
+      const response = await axiosSecure.get(`/user/${firebaseUser.email}`, {
+        withCredentials: true,
+      });
       return response.data;
     },
   });
   useEffect(() => {
     if (userData) {
       setUser(userData);
+      setLoading(false);
     } else {
       setUser(null);
     }
@@ -81,6 +80,7 @@ const ProfastProvidor = ({ children }) => {
     setFirebaseUser,
     createAccount,
     logoutUser,
+    isPending,
     user,
   };
   return <ProfastContext value={sharedData}>{children}</ProfastContext>;
