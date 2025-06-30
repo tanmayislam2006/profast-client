@@ -26,7 +26,6 @@ const Pending = () => {
             confirmButtonText: "OK",
           });
         }
-        // if(res.data.mod)
       });
     refetch();
     setSelectedRider(null);

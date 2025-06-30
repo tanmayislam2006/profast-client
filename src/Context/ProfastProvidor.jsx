@@ -11,12 +11,14 @@ import {
 import auth from "../Firebase/firebase.init.js";
 import axios from "axios";
 import { useQuery } from "@tanstack/react-query";
+import useAxios from "../Hook/useAxios.jsx";
 const googleProvider = new GoogleAuthProvider();
 
 const ProfastProvidor = ({ children }) => {
   const [firebaseUser, setFirebaseUser] = useState(null);
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
+  const axiosInstance = useAxios();
   const createAccount = (email, password) => {
     setLoading(true);
     return createUserWithEmailAndPassword(auth, email, password);
@@ -35,6 +37,15 @@ const ProfastProvidor = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setFirebaseUser(currentUser);
+      if (currentUser?.email) {
+        axiosInstance.post(
+          "/jsonwebtoken",
+          {
+            email: currentUser?.email,
+          },
+          { withCredentials: true }
+        );
+      }
       setLoading(false);
     });
     return () => {
