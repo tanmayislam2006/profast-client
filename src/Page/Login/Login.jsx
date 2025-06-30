@@ -8,7 +8,7 @@ import axios from "axios";
 
 const Login = () => {
   const [showPass, setShowPass] = useState(false);
-  const { googleLogin, loginUser } = useProfastAuth();
+  const { googleLogin, loginUser,refetch } = useProfastAuth();
   const navigate = useNavigate();
   const handleGoogleLogin = () => {
     googleLogin().then((result) => {
@@ -27,6 +27,7 @@ const Login = () => {
           "https://profast-server-indol.vercel.app/register",
           userData
         );
+        refetch()
         navigate(location?.state || "/");
       }
 
@@ -48,6 +49,7 @@ const Login = () => {
               email: result.user.email,
             });
             toast.success("Login successful!");
+            refetch()
             navigate(location?.state || "/");
           }
         })

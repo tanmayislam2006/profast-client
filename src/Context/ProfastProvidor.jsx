@@ -53,7 +53,7 @@ const ProfastProvidor = ({ children }) => {
       unsubscribe();
     };
   }, [axiosInstance]);
-  const { data: userData, isPending } = useQuery({
+  const { data: userData, isPending ,refetch} = useQuery({
     queryKey: ["user", firebaseUser?.email],
     enabled: !!firebaseUser?.email,
     queryFn: async () => {
@@ -82,6 +82,7 @@ const ProfastProvidor = ({ children }) => {
     logoutUser,
     isPending,
     user,
+    refetch
   };
   return <ProfastContext value={sharedData}>{children}</ProfastContext>;
 };

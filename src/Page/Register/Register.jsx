@@ -13,7 +13,7 @@ const Register = () => {
   const [showPass, setShowPass] = useState(false);
   const [image, setImage] = useState(null);
   const [preview, setPreview] = useState(defaultAvatar);
-  const { googleLogin, createAccount } = useProfastAuth();
+  const { googleLogin, createAccount, refetch } = useProfastAuth();
   const navigate = useNavigate();
   const handleGoogleLogin = () => {
     googleLogin().then((result) => {
@@ -63,6 +63,7 @@ const Register = () => {
               "https://profast-server-indol.vercel.app/register",
               userData
             );
+            refetch();
           }
         })
         .catch((error) => {
