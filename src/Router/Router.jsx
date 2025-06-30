@@ -16,6 +16,9 @@ import MyPayment from "../Page/DasBoard/MyPayments/MyPayment";
 import BeArider from "../Page/BeARider/BeArider";
 import Approved from "../Page/DasBoard/Rider/Approved/Approved";
 import Pending from "../Page/DasBoard/Rider/Pending/Pending";
+import Forbidden from "../Components/Forbidden/Forbidden";
+import AdminRouter from "./AdminRouter";
+import UserAdmin from './../Page/DasBoard/UserAdmin/UserAdmin';
 
 const router = createBrowserRouter([
   {
@@ -57,6 +60,10 @@ const router = createBrowserRouter([
         loader: () => fetch("./coverageArea.json"),
         hydrateFallbackElement: <p className="text-center">Data is loading</p>,
       },
+      {
+        path:"forbidden",
+        Component:Forbidden
+      }
     ],
   },
   // authetication routes
@@ -102,6 +109,12 @@ const router = createBrowserRouter([
       {
         path: "pendingRiders",
         Component: Pending,
+      },
+      {
+        path: "userAdmin",
+        element:<AdminRouter>
+          <UserAdmin/>
+        </AdminRouter>
       },
     ],
   },

@@ -1,8 +1,10 @@
 import React from "react";
 import { NavLink, Outlet } from "react-router";
 import Profast from "../Components/Profast/Profast";
+import useProfastAuth from "../Hook/useProfastAuth";
 
 const DashboardLayout = () => {
+  const {user}=useProfastAuth()
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -67,35 +69,52 @@ const DashboardLayout = () => {
                   ? "flex items-center gap-2 font-bold text-primary underline"
                   : "flex items-center gap-2"
               }
-              to="/dashboard/pendingRiders"
-            >
-              Pending Riders
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "flex items-center gap-2 font-bold text-primary underline"
-                  : "flex items-center gap-2"
-              }
-              to="/dashboard/approvedRiders"
-            >
-              Active Riders
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "flex items-center gap-2 font-bold text-primary underline"
-                  : "flex items-center gap-2"
-              }
               to="/dashboard/myPayments"
             >
               My Payments
             </NavLink>
           </li>
+          { user?.role ==='admin'&&
+            <>
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex items-center gap-2 font-bold text-primary underline"
+                      : "flex items-center gap-2"
+                  }
+                  to="/dashboard/pendingRiders"
+                >
+                  Pending Riders
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex items-center gap-2 font-bold text-primary underline"
+                      : "flex items-center gap-2"
+                  }
+                  to="/dashboard/approvedRiders"
+                >
+                  Active Riders
+                </NavLink>
+              </li>
+
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex items-center gap-2 font-bold text-primary underline"
+                      : "flex items-center gap-2"
+                  }
+                  to="/dashboard/userAdmin"
+                >
+                  User Admin
+                </NavLink>
+              </li>
+            </>
+          }
         </ul>
       </div>
     </div>
