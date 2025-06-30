@@ -12,7 +12,8 @@ const MyPayment = () => {
     queryKey: ["myPayments", firebaseUser?.email],
     queryFn: async () => {
       const res = await axiosSecure.get(
-        `/myPayments?email=${firebaseUser?.email}`
+        `/myPayments?email=${firebaseUser?.email}`,
+        { withCredentials: true }
       );
       return res.data;
     },
