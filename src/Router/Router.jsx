@@ -18,8 +18,9 @@ import Approved from "../Page/DasBoard/Rider/Approved/Approved";
 import Pending from "../Page/DasBoard/Rider/Pending/Pending";
 import Forbidden from "../Components/Forbidden/Forbidden";
 import AdminRouter from "./AdminRouter";
-import UserAdmin from './../Page/DasBoard/UserAdmin/UserAdmin';
+import UserAdmin from "./../Page/DasBoard/UserAdmin/UserAdmin";
 import AssignRider from "../Page/DasBoard/AssignRider/AssignRider";
+import DashboardHome from "../Page/DasBoard/DashBoardHome/DashBoardHome";
 
 const router = createBrowserRouter([
   {
@@ -62,9 +63,9 @@ const router = createBrowserRouter([
         hydrateFallbackElement: <p className="text-center">Data is loading</p>,
       },
       {
-        path:"forbidden",
-        Component:Forbidden
-      }
+        path: "forbidden",
+        Component: Forbidden,
+      },
     ],
   },
   // authetication routes
@@ -92,6 +93,10 @@ const router = createBrowserRouter([
     ),
     children: [
       {
+        index:true,
+        Component:DashboardHome
+      },
+      {
         path: "myParcels",
         Component: MyPercel,
       },
@@ -113,15 +118,19 @@ const router = createBrowserRouter([
       },
       {
         path: "userAdmin",
-        element:<AdminRouter>
-          <UserAdmin/>
-        </AdminRouter>
+        element: (
+          <AdminRouter>
+            <UserAdmin />
+          </AdminRouter>
+        ),
       },
       {
         path: "assignRiders",
-        element:<AdminRouter>
-          <AssignRider/>
-        </AdminRouter>
+        element: (
+          <AdminRouter>
+            <AssignRider />
+          </AdminRouter>
+        ),
       },
     ],
   },
