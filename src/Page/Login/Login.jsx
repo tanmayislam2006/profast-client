@@ -44,7 +44,7 @@ const Login = () => {
         .then((result) => {
           if (result.user) {
             const lastSignInTime = result?.user?.metadata?.lastSignInTime;
-            axios.patch(`http://localhost:5000/login`, {
+            axios.patch(`https://profast-server-indol.vercel.app/login`, {
               lastSignInTime,
               email: result.user.email,
             });

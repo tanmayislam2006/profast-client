@@ -9,81 +9,80 @@ import {
   signOut,
 } from "firebase/auth";
 import auth from "../Firebase/firebase.init.js";
-import { useQuery } from "@tanstack/react-query";
 import useAxios from "../Hook/useAxios.jsx";
-import useAxiosSecure from "../Hook/useAxiosSecure.jsx";
+import useUserData from "../Hook/useUserData.jsx";
+
 const googleProvider = new GoogleAuthProvider();
 
-const ProfastProvidor = ({ children }) => {
+const ProfastProvider = ({ children }) => {
+  // 1️⃣ Firebase Auth State
   const [firebaseUser, setFirebaseUser] = useState(null);
-  const [user, setUser] = useState(null);
-  const [loading, setLoading] = useState(true);
+  const [firebaseLoading, setFirebaseLoading] = useState(true);
   const axiosInstance = useAxios();
-  const axiosSecure = useAxiosSecure();
-  const createAccount = (email, password) => {
-    setLoading(true);
-    return createUserWithEmailAndPassword(auth, email, password);
-  };
-  const googleLogin = () => {
-    setLoading(true);
-    return signInWithPopup(auth, googleProvider);
-  };
-  const loginUser = (email, password) => {
-    setLoading(true);
-    return signInWithEmailAndPassword(auth, email, password);
-  };
-  const logoutUser = () => {
-    return signOut(auth);
-  };
+
+  // 2️⃣ Listen for Firebase Auth changes
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
       setFirebaseUser(currentUser);
+
+      // Get JWT from backend
       if (currentUser?.email) {
         axiosInstance.post(
           "/jsonwebtoken",
-          {
-            email: currentUser?.email,
-          },
+          { email: currentUser.email },
           { withCredentials: true }
         );
       }
-      setLoading(false);
+
+      setFirebaseLoading(false);
     });
-    return () => {
-      unsubscribe();
-    };
+
+    return () => unsubscribe();
   }, [axiosInstance]);
-  const { data: userData, isPending ,refetch} = useQuery({
-    queryKey: ["user", firebaseUser?.email],
-    enabled: !!firebaseUser?.email,
-    queryFn: async () => {
-      const response = await axiosSecure.get(`/user/${firebaseUser.email}`, {
-        withCredentials: true,
-      });
-      return response.data;
-    },
-  });
-  useEffect(() => {
-    if (userData) {
-      setUser(userData);
-      setLoading(false);
-    } else {
-      setUser(null);
-    }
-  }, [userData]);
+
+  // 3️⃣ Load User Role from Database
+  const { data: user, isPending: userLoading, refetch } = useUserData(firebaseUser?.email);
+
+  // 4️⃣ Combined Loading State
+  const loading = firebaseLoading || userLoading;
+
+  // 5️⃣ Auth Actions
+  const createAccount = (email, password) => {
+    setFirebaseLoading(true);
+    return createUserWithEmailAndPassword(auth, email, password);
+  };
+
+  const googleLogin = () => {
+    setFirebaseLoading(true);
+    return signInWithPopup(auth, googleProvider);
+  };
+
+  const loginUser = (email, password) => {
+    setFirebaseLoading(true);
+    return signInWithEmailAndPassword(auth, email, password);
+  };
+
+  const logoutUser = () => signOut(auth);
+
+  // 6️⃣ Shared Context Data
   const sharedData = {
     firebaseUser,
+    user,
     loading,
-    setLoading,
+    firebaseLoading,
+    userLoading,
     googleLogin,
     loginUser,
-    setFirebaseUser,
     createAccount,
     logoutUser,
-    isPending,
-    user,
-    refetch
+    refetch,
   };
-  return <ProfastContext value={sharedData}>{children}</ProfastContext>;
+
+  return (
+    <ProfastContext value={sharedData}>
+      {children}
+    </ProfastContext>
+  );
 };
-export default ProfastProvidor;
+
+export default ProfastProvider;
