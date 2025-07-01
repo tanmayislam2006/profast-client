@@ -4,7 +4,7 @@ import { useMemo } from "react";
 const useAxios = () => {
   const axiosInstance = useMemo(() => {
     return axios.create({
-      baseURL: `https://profast-server-indol.vercel.app`,
+      baseURL: `http://localhost:5000`,
     });
   }, []);
   return axiosInstance;
