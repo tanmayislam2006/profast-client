@@ -20,7 +20,9 @@ const PaymentForm = () => {
   const { data: parcelInfo = {} } = useQuery({
     queryKey: ["parcel", id],
     queryFn: async () => {
-      const res = await axiosSecure.get(`/parcels/${id}`,{withCredentials:true});
+      const res = await axiosSecure.get(`/parcels/${id}`, {
+        withCredentials: true,
+      });
       return res.data;
     },
   });
@@ -64,9 +66,13 @@ const PaymentForm = () => {
     }
 
     // Step 2: Get clientSecret from backend (creates PaymentIntent)
-    const { data } = await axiosSecure.post("/create-payment-intent", {
-      amount: amountInCents, // Amount in cents/paisa
-    });
+    const { data } = await axiosSecure.post(
+      "/create-payment-intent",
+      {
+        amount: amountInCents, // Amount in cents/paisa
+      },
+      { withCredentials: true }
+    );
 
     const clientSecret = data.clientSecret;
 
@@ -86,9 +92,13 @@ const PaymentForm = () => {
     } else if (result.paymentIntent.status === "succeeded") {
       setSuccess("🎉 Payment successful!");
       // Step 4: Update the parcel status in the database
-      await axiosSecure.patch(`/parcel/${id}`, {
-        payment_status: "paid", // 👈 Match field name in DB
-      });
+      await axiosSecure.patch(
+        `/parcel/${id}`,
+        {
+          payment_status: "paid", // 👈 Match field name in DB
+        },
+        { withCredentials: true }
+      );
       // Save payment info to the DB
       const paymentInfo = {
         transactionId: result.paymentIntent.id,
@@ -100,7 +110,9 @@ const PaymentForm = () => {
         paymentMethod: "card",
         status: "succeeded",
       };
-      await axiosSecure.post("/payments", paymentInfo);
+      await axiosSecure.post("/payments", paymentInfo, {
+        withCredentials: true,
+      });
       Swal.fire({
         title: "Payment Successful",
         text: `Your payment of ${parcelInfo?.cost} was successful!`,

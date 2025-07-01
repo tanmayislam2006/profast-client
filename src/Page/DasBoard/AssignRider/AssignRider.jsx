@@ -29,10 +29,14 @@ const AssignRider = () => {
    */
   const assignMutation = useMutation({
     mutationFn: async ({ parcelId, rider }) => {
-      const res = await axiosSecure.patch(`/admin/parcels/${parcelId}/assign`, {
-        riderId: rider._id,
-        riderName: rider.name,
-      });
+      const res = await axiosSecure.patch(
+        `/admin/parcels/${parcelId}/assign`,
+        {
+          riderId: rider._id,
+          riderName: rider.rider_name,
+        },
+        { withCredentials: true }
+      );
       return res.data;
     },
     onSuccess: () => {
