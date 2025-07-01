@@ -19,6 +19,7 @@ import Pending from "../Page/DasBoard/Rider/Pending/Pending";
 import Forbidden from "../Components/Forbidden/Forbidden";
 import AdminRouter from "./AdminRouter";
 import UserAdmin from './../Page/DasBoard/UserAdmin/UserAdmin';
+import AssignRider from "../Page/DasBoard/AssignRider/AssignRider";
 
 const router = createBrowserRouter([
   {
@@ -114,6 +115,12 @@ const router = createBrowserRouter([
         path: "userAdmin",
         element:<AdminRouter>
           <UserAdmin/>
+        </AdminRouter>
+      },
+      {
+        path: "assignRiders",
+        element:<AdminRouter>
+          <AssignRider/>
         </AdminRouter>
       },
     ],

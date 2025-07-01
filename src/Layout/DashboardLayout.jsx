@@ -76,6 +76,19 @@ const DashboardLayout = () => {
           </li>
           { user?.role ==='admin'&&
             <>
+            
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex items-center gap-2 font-bold text-primary underline"
+                      : "flex items-center gap-2"
+                  }
+                  to="/dashboard/assignRiders"
+                >
+                  Assign Riders
+                </NavLink>
+              </li>
               <li>
                 <NavLink
                   className={({ isActive }) =>
