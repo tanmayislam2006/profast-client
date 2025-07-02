@@ -25,6 +25,7 @@ import RiderRouter from "./RiderRouter";
 import PendingDelivery from "../Page/DasBoard/RidersDashBoard/PendingDelivery/PendingDelivery";
 import CompletedDelivery from "../Page/DasBoard/RidersDashBoard/CompletedDelivery/CompletedDelivery";
 import MyEarning from "../Page/DasBoard/RidersDashBoard/MyEarning/MyEarning";
+import Tracking from "../Page/DasBoard/Tracking/Tracking";
 
 const router = createBrowserRouter([
   {
@@ -112,6 +113,11 @@ const router = createBrowserRouter([
         path: "myPayments",
         Component: MyPayment,
       },
+      {
+        path: "tracking",
+        Component: Tracking,
+      },
+
       // admin route
       {
         path: "approvedRiders",

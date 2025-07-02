@@ -48,7 +48,7 @@ const MyPercel = () => {
     });
     if (confirm.isConfirmed) {
       try {
-        axiosSecure.delete(`/deleteParcel/${id}`).then((res) => {
+        axiosSecure.delete(`/deleteParcel/${id}`,{withCredentials:true}).then((res) => {
           if (res.data.deletedCount) {
             Swal.fire({
               title: "Deleted!",

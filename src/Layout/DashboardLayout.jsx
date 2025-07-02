@@ -78,6 +78,18 @@ const DashboardLayout = () => {
               </li>
             </>
           )}
+          <li>
+            <NavLink
+              className={({ isActive }) =>
+                isActive
+                  ? "flex items-center gap-2 font-bold text-primary underline"
+                  : "flex items-center gap-2"
+              }
+              to="/dashboard/tracking"
+            >
+             Tracking
+            </NavLink>
+          </li>
           {user?.role === "rider" && (
             <>
               <li>
@@ -118,6 +130,7 @@ const DashboardLayout = () => {
               </li>
             </>
           )}
+
           {user?.role === "admin" && (
             <>
               <li>
