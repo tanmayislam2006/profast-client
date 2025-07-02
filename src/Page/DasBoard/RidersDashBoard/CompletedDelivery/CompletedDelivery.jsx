@@ -4,7 +4,6 @@ import Swal from "sweetalert2";
 import useAxiosSecure from "../../../../Hook/useAxiosSecure";
 import useProfastAuth from "../../../../Hook/useProfastAuth";
 
-
 const CompletedDelivery = () => {
   // Secure Axios instance with authentication headers / tokens
   const axiosSecure = useAxiosSecure();
@@ -13,7 +12,7 @@ const CompletedDelivery = () => {
   const queryClient = useQueryClient();
 
   // Logged-in rider info
-  const { user } = useProfastAuth()
+  const { user } = useProfastAuth();
   const riderEmail = user?.email;
 
   /**
@@ -28,9 +27,12 @@ const CompletedDelivery = () => {
     queryKey: ["completedDeliveries", riderEmail],
     enabled: !!riderEmail,
     queryFn: async () => {
-      const res = await axiosSecure.get(`/rider/completedPercel/${riderEmail}`, {
-        withCredentials: true,
-      });
+      const res = await axiosSecure.get(
+        `/rider/completedPercel/${riderEmail}`,
+        {
+          withCredentials: true,
+        }
+      );
       return res.data;
     },
   });
@@ -54,8 +56,12 @@ const CompletedDelivery = () => {
    *    - PATCH /parcels/:id/cashout
    */
   const mutation = useMutation({
-    mutationFn: async (parcelId) => {
-      await axiosSecure.patch(`/parcels/${parcelId}/cashout`, {}, { withCredentials: true });
+    mutationFn: async ({ parcelId }) => {
+      await axiosSecure.patch(
+        `/completedPercel/${[parcelId]}/cashOut`,
+        {},
+        { withCredentials: true }
+      );
     },
     onSuccess: () => {
       // Refresh the list after successful cashout
@@ -78,8 +84,8 @@ const CompletedDelivery = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          await mutation.mutateAsync(parcelId);
-          Swal.fire("Success!", "Cashout completed.", "success");
+            Swal.fire("Success!", "Cashout completed.", "success");
+            mutation.mutate({ parcelId: parcelId });
         } catch (error) {
           console.error(error);
           Swal.fire("Error!", "Failed to cash out. Try again.", "error");
@@ -100,9 +106,13 @@ const CompletedDelivery = () => {
           <span className="loading loading-spinner loading-lg text-primary"></span>
         </div>
       ) : isError ? (
-        <p className="text-error">Failed to load deliveries. Please try again.</p>
+        <p className="text-error">
+          Failed to load deliveries. Please try again.
+        </p>
       ) : parcels.length === 0 ? (
-        <p className="text-gray-500">You don't have any completed deliveries yet.</p>
+        <p className="text-gray-500">
+          You don't have any completed deliveries yet.
+        </p>
       ) : (
         <div className="overflow-x-auto">
           <table className="table table-zebra w-full">
@@ -114,7 +124,7 @@ const CompletedDelivery = () => {
                 <th>To</th>
                 <th>Picked At</th>
                 <th>Delivered At</th>
-                <th>Delivery Fee (৳)</th>
+                <th>Total Cost (৳)</th>
                 <th>Your Earning (৳)</th>
                 <th>Cashout Status</th>
               </tr>
@@ -126,10 +136,20 @@ const CompletedDelivery = () => {
                   <td>{parcel.title}</td>
                   <td>{parcel.sender_center}</td>
                   <td>{parcel.receiver_center}</td>
-                  <td>{parcel.picked_at ? new Date(parcel.picked_at).toLocaleString() : "N/A"}</td>
-                  <td>{parcel.delivered_at ? new Date(parcel.delivered_at).toLocaleString() : "N/A"}</td>
+                  <td>
+                    {parcel.picked_at
+                      ? new Date(parcel.picked_at).toLocaleString()
+                      : "N/A"}
+                  </td>
+                  <td>
+                    {parcel.delivered_at
+                      ? new Date(parcel.delivered_at).toLocaleString()
+                      : "N/A"}
+                  </td>
                   <td>৳{parcel.cost}</td>
-                  <td className="font-semibold text-green-600">৳{calculateEarning(parcel).toFixed(2)}</td>
+                  <td className="font-semibold text-green-600">
+                    ৳{calculateEarning(parcel).toFixed(2)}
+                  </td>
                   <td>
                     {parcel.cashout_status === "cashed_out" ? (
                       <span className="badge badge-success text-xs px-2 py-1 whitespace-nowrap">
