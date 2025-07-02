@@ -29,38 +29,33 @@ const PendingDelivery = () => {
   });
 
   // Mutation for status update
-  const { mutateAsync: updateStatus } = useMutation({
-    mutationFn: async ({ parcelId, status }) => {
-      const res = await axiosSecure.patch(`/parcels/${parcelId}/status`, {
-        status,
-      });
-      return res.data;
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries(["pendingRiderParcels", user?.email]);
-    },
-  });
+const mutation = useMutation({
+  mutationFn: async ({ parcelId, status }) => {
+    await axiosSecure.patch(`/parcels/${parcelId}/status`, { status }, { withCredentials: true });
+  },
+  onSuccess: () => {
+    queryClient.invalidateQueries(["pendingRiderParcels", user?.email]);
+    Swal.fire("Updated!", "Parcel status updated.", "success");
+  },
+  onError: () => {
+    Swal.fire("Error!", "Failed to update status.", "error");
+  },
+});
 
-  // Handle status update
-  const handleStatusUpdate = (parcel, newStatus) => {
-    Swal.fire({
-      title: "Are you sure?",
-      text: `Mark parcel as ${newStatus.replace("_", " ")}?`,
-      icon: "question",
-      showCancelButton: true,
-      confirmButtonText: "Yes, update",
-    }).then((result) => {
-      if (result.isConfirmed) {
-        updateStatus({ parcelId: parcel._id, status: newStatus })
-          .then(() => {
-            Swal.fire("Updated!", "Parcel status updated.", "success");
-          })
-          .catch(() => {
-            Swal.fire("Error!", "Failed to update status.", "error");
-          });
-      }
-    });
-  };
+const handleStatusUpdate = (parcel, newStatus) => {
+  Swal.fire({
+    title: "Are you sure?",
+    text: `Mark parcel as ${newStatus.replace("_", " ")}?`,
+    icon: "question",
+    showCancelButton: true,
+    confirmButtonText: "Yes, update",
+  }).then((result) => {
+    if (result.isConfirmed) {
+      mutation.mutate({ parcelId: parcel._id, status: newStatus });
+    }
+  });
+};
+
 
   // UI
   return (
@@ -132,8 +127,8 @@ const PendingDelivery = () => {
 
       {/* Info Modal */}
       {selectedParcel && (
-        <div className="fixed inset-0 z-50 flex items-center justify-center bg-black bg-opacity-40">
-          <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-lg relative animate-fadeIn">
+        <div className="fixed inset-0 z-50 flex items-center justify-center">
+          <div className="bg-white rounded-xl shadow-lg p-8 w-full max-w-2xl relative animate-fadeIn">
             <button
               className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2"
               onClick={() => setSelectedParcel(null)}
