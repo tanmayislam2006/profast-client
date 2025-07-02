@@ -21,6 +21,8 @@ import AdminRouter from "./AdminRouter";
 import UserAdmin from "./../Page/DasBoard/UserAdmin/UserAdmin";
 import AssignRider from "../Page/DasBoard/AssignRider/AssignRider";
 import DashboardHome from "../Page/DasBoard/DashBoardHome/DashBoardHome";
+import RiderRouter from "./RiderRouter";
+import PendingDelivery from "../Page/DasBoard/RidersDashBoard/PendingDelivery/PendingDelivery";
 
 const router = createBrowserRouter([
   {
@@ -93,8 +95,8 @@ const router = createBrowserRouter([
     ),
     children: [
       {
-        index:true,
-        Component:DashboardHome
+        index: true,
+        Component: DashboardHome,
       },
       {
         path: "myParcels",
@@ -108,13 +110,22 @@ const router = createBrowserRouter([
         path: "myPayments",
         Component: MyPayment,
       },
+      // admin route
       {
         path: "approvedRiders",
-        Component: Approved,
+        element: (
+          <AdminRouter>
+            <Approved />
+          </AdminRouter>
+        ),
       },
       {
         path: "pendingRiders",
-        Component: Pending,
+        element: (
+          <AdminRouter>
+            <Pending />
+          </AdminRouter>
+        ),
       },
       {
         path: "userAdmin",
@@ -131,6 +142,13 @@ const router = createBrowserRouter([
             <AssignRider />
           </AdminRouter>
         ),
+      },
+      // rider route
+      {
+        path:'myPendingDelivery',
+        element:<RiderRouter>
+          <PendingDelivery/>
+        </RiderRouter>
       },
     ],
   },

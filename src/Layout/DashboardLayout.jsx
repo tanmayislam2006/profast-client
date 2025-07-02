@@ -4,7 +4,7 @@ import Profast from "../Components/Profast/Profast";
 import useProfastAuth from "../Hook/useProfastAuth";
 
 const DashboardLayout = () => {
-  const {user}=useProfastAuth()
+  const { user } = useProfastAuth();
   return (
     <div className="drawer lg:drawer-open">
       <input id="my-drawer-2" type="checkbox" className="drawer-toggle" />
@@ -50,33 +50,52 @@ const DashboardLayout = () => {
           <li>
             <a href="/">Home</a>
           </li>
-          <li>
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "flex items-center gap-2 font-bold text-primary underline"
-                  : "flex items-center gap-2"
-              }
-              to="/dashboard/myParcels"
-            >
-              My Parcels
-            </NavLink>
-          </li>
-          <li>
-            <NavLink
-              className={({ isActive }) =>
-                isActive
-                  ? "flex items-center gap-2 font-bold text-primary underline"
-                  : "flex items-center gap-2"
-              }
-              to="/dashboard/myPayments"
-            >
-              My Payments
-            </NavLink>
-          </li>
-          { user?.role ==='admin'&&
+          {user?.role === "user" && (
             <>
-            
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex items-center gap-2 font-bold text-primary underline"
+                      : "flex items-center gap-2"
+                  }
+                  to="/dashboard/myParcels"
+                >
+                  My Parcels
+                </NavLink>
+              </li>
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex items-center gap-2 font-bold text-primary underline"
+                      : "flex items-center gap-2"
+                  }
+                  to="/dashboard/myPayments"
+                >
+                  My Payments
+                </NavLink>
+              </li>
+            </>
+          )}
+          {user?.role === "rider" && (
+            <>
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex items-center gap-2 font-bold text-primary underline"
+                      : "flex items-center gap-2"
+                  }
+                  to="/dashboard/myPendingDelivery"
+                >
+                  My Pending Delivery
+                </NavLink>
+              </li>
+            </>
+          )}
+          {user?.role === "admin" && (
+            <>
               <li>
                 <NavLink
                   className={({ isActive }) =>
@@ -127,7 +146,7 @@ const DashboardLayout = () => {
                 </NavLink>
               </li>
             </>
-          }
+          )}
         </ul>
       </div>
     </div>

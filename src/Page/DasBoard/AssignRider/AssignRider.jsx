@@ -32,7 +32,7 @@ const AssignRider = () => {
       const res = await axiosSecure.patch(
         `/admin/parcels/${parcelId}/assign`,
         {
-          riderId: rider._id,
+          riderEmail: rider.email,
           riderName: rider.rider_name,
         },
         { withCredentials: true }
