@@ -92,6 +92,18 @@ const DashboardLayout = () => {
                   My Pending Delivery
                 </NavLink>
               </li>
+              <li>
+                <NavLink
+                  className={({ isActive }) =>
+                    isActive
+                      ? "flex items-center gap-2 font-bold text-primary underline"
+                      : "flex items-center gap-2"
+                  }
+                  to="/dashboard/myCompletedDelivery"
+                >
+                  My Completed Delivery
+                </NavLink>
+              </li>
             </>
           )}
           {user?.role === "admin" && (

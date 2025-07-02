@@ -23,6 +23,7 @@ import AssignRider from "../Page/DasBoard/AssignRider/AssignRider";
 import DashboardHome from "../Page/DasBoard/DashBoardHome/DashBoardHome";
 import RiderRouter from "./RiderRouter";
 import PendingDelivery from "../Page/DasBoard/RidersDashBoard/PendingDelivery/PendingDelivery";
+import CompletedDelivery from "../Page/DasBoard/RidersDashBoard/CompletedDelivery/CompletedDelivery";
 
 const router = createBrowserRouter([
   {
@@ -145,10 +146,20 @@ const router = createBrowserRouter([
       },
       // rider route
       {
-        path:'myPendingDelivery',
-        element:<RiderRouter>
-          <PendingDelivery/>
-        </RiderRouter>
+        path: "myPendingDelivery",
+        element: (
+          <RiderRouter>
+            <PendingDelivery />
+          </RiderRouter>
+        ),
+      },
+      {
+        path: "myCompletedDelivery",
+        element: (
+          <RiderRouter>
+            <CompletedDelivery />
+          </RiderRouter>
+        ),
       },
     ],
   },
