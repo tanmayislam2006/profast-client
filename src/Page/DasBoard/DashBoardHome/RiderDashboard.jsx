@@ -1,11 +1,8 @@
-import React from 'react';
+import React from "react";
+import MyEarning from "../RidersDashBoard/MyEarning/MyEarning";
 
 const RiderDashboard = () => {
-    return (
-        <div>
-            this is rider DashboardHome
-        </div>
-    );
+  return <MyEarning />;
 };
 
 export default RiderDashboard;
