@@ -9,7 +9,7 @@ import Forbidden from "../../../Components/Forbidden/Forbidden";
 const DashboardHome = () => {
     const{user}=useProfastAuth()
 
-    if(user.role ==="user"){
+    if(user?.role ==="user"){
       return <UserDashboard/>
     }
     else if(user?.role==="rider"){
