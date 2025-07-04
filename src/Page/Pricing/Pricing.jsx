@@ -72,7 +72,7 @@ const Pricing = () => {
       created_by: firebaseUser.email,
       payment_status: "unpaid",
       delivery_status: "not_collected",
-      creation_date: new Date().toLocaleDateString("en-GB"),
+      creation_date: new Date(),
       tracking_id: generateTrackingID(),
     });
 
